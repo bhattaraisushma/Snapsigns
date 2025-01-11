@@ -42,22 +42,30 @@ const WordToASLConverter = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-      <h1 className="text-3xl font-bold mb-6">Convert Word to ASL Gloss</h1>
-      <div className="flex space-x-4">
-      <input
+    <div className="flex flex-col items-center justify-end mb-[6rem] w-full min-h-screen bg-purple-200 ">
+      {/* <h1 className="text-3xl font-bold mb-6">Convert Word to ASL Gloss</h1> */}
+      <div className="flex space-x-4 items-center ">
+      <input type="text" 
+     
+      
+       value={word}
+       onChange={(e) => setWord(e.target.value)}
+      placeholder="Enter text to generate sign language" className='border-solid  text-center h-[4rem] w-[20rem] rounded-[0.4rem]' />
+   
+     
+      {/* <input
   type="text"
   placeholder="Enter a word..."
   value={word}
   onChange={(e) => setWord(e.target.value)}
   className="p-4 border rounded-lg w-[1600px] h-[400px] text-lg focus:outline-none focus:ring-4 focus:ring-blue-500"
-/>
+/> */}
 
 
 
         <button
           onClick={handleConvert}
-          className="bg-blue-500 text-white px-6 py-3 rounded-md hover:bg-blue-600"
+          className="bg-blue-500 text-white px-6 py-3 h-[2.5rem] rounded-[0.4rem] flex items-center hover:bg-blue-600"
           disabled={loading} // Disable button while loading
         >
           {loading ? "Converting..." : "Convert"}
