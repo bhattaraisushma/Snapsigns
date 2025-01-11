@@ -14,7 +14,6 @@ const processText = (inputText) => {
             } else {
                 try {
                     console.log("Python Script Output:", stdout); 
-                    console.log("Hi neha ") 
                     const result = JSON.parse(stdout);  
                     resolve(result.asl_gloss);  
                 } catch (e) {
@@ -25,7 +24,6 @@ const processText = (inputText) => {
         });
     });
 };
-
 
 async function fetchWithRetry(url, data, options, retries = 3) {
     for (let i = 0; i < retries; i++) {
@@ -51,13 +49,12 @@ async function fetchWithRetry(url, data, options, retries = 3) {
 
 exports.processTextForASLGloss = async (inputText) => {
     try {
-        
         const processedText = await processText(inputText);
         console.log("Processed Text for ASL Gloss:", processedText);  
 
         const result = await fetchWithRetry(
             HF_API_URL,
-            { inputs: `translate English to ASL Gloss: ${processedText}` }, 
+            { inputs: `Provide the ASL gloss in English only: ${processedText}` }, // Updated prompt
             { headers: { Authorization: `Bearer ${HF_API_KEY}` } }
         );
 
@@ -71,10 +68,25 @@ exports.processTextForASLGloss = async (inputText) => {
     }
 };
 
-
 if (require.main === module) {
     const inputText = "How are you dancing";  
     exports.processTextForASLGloss(inputText)
         .then(result => console.log("Final ASL Gloss Output:", result))
         .catch(err => console.error("Error:", err));
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
