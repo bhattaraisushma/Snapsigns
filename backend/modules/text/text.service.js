@@ -10,6 +10,7 @@ const processText = (inputText) => {
         exec(`python spacy_processor.py "${inputText}"`, (err, stdout, stderr) => {
             if (err) {
                 console.error("Error executing Python script:", stderr);
+                console.log("Neha shah")
                 reject(`Error executing Python script: ${stderr}`);
             } else {
                 try {
