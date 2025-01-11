@@ -50,7 +50,7 @@ const WordToASLConverter = () => {
       
        value={word}
        onChange={(e) => setWord(e.target.value)}
-      placeholder="Enter text to generate sign language" className='border-solid  text-center h-[4rem] w-[20rem] rounded-[0.4rem]' />
+      placeholder="Enter text to generate sign language" className='border-solid  text-center h-[4rem] w-[20rem] rounded-[2rem]' />
    
      
       {/* <input
@@ -65,7 +65,7 @@ const WordToASLConverter = () => {
 
         <button
           onClick={handleConvert}
-          className="bg-blue-500 text-white px-6 py-3 h-[2.5rem] rounded-[0.4rem] flex items-center hover:bg-blue-600"
+          className="bg-blue-500 text-white px-6 py-3 h-[2.5rem] rounded-[rem] flex items-center hover:bg-blue-600"
           disabled={loading} // Disable button while loading
         >
           {loading ? "Converting..." : "Convert"}
