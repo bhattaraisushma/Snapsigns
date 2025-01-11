@@ -28,8 +28,8 @@ const WordToASLConverter = () => {
         }
       );
 
-      
-      console.log("Backend response:", response.data); 
+      console.log("Backend response:", response.data.result[0].translation_text.split(": ").pop());
+      setAslGloss(response.data.result[0].translation_text.split(": ").pop());
     
     } catch (error) {
       setAslGloss(
