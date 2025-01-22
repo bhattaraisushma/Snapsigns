@@ -12,6 +12,7 @@ for word in temporal_words:
 
 
 nlp.vocab["please"].is_stop = False
+nlp.vocab["my"].is_stop = False
 
 
 IMPORTANT_WORDS = {"i", "we", "me", "you", "he", "she", "it", "they", "them", 
@@ -26,8 +27,49 @@ SPECIAL_GLOSSES = {
 
 
 
+# def process_text(input_text: str) -> dict:
+#     doc = nlp(input_text)
+
+#     filtered_tokens = []
+#     last_token = None  
+
+#     for token in doc:
+#         token_text = token.text.lower()
+
+       
+#         if token_text in IMPORTANT_WORDS:
+#             processed_token = token.text.upper()
+#         elif token_text in VERB_EXCEPTIONS:
+#             processed_token = VERB_EXCEPTIONS[token_text].upper()
+#         elif token_text in SPECIAL_GLOSSES:
+#             processed_token = SPECIAL_GLOSSES[token_text]
+#         else:
+           
+#             if token.pos_ == "NUM" or (not token.is_punct and not token.is_stop):
+#                 processed_token = token.lemma_.upper()
+
+       
+#         if processed_token and processed_token != last_token:
+#             filtered_tokens.append(processed_token)
+#             last_token = processed_token
+
+   
+#     asl_gloss = " ".join(filtered_tokens)
+
+#     processed_data = {
+#         "text": input_text.upper(),
+#         "lemmas": filtered_tokens,
+#         "pos_tags": [token.pos_.upper() for token in doc if not token.is_punct],
+#         "asl_gloss": asl_gloss
+#     }
+
+#     return processed_data
+
 def process_text(input_text: str) -> dict:
     doc = nlp(input_text)
+
+    # Define POS tags to exclude from ASL gloss
+    excluded_pos = {"AUX", "ADP"}
 
     filtered_tokens = []
     last_token = None  
@@ -35,34 +77,35 @@ def process_text(input_text: str) -> dict:
     for token in doc:
         token_text = token.text.lower()
 
-       
-        if token_text in IMPORTANT_WORDS:
-            processed_token = token.text.upper()
-        elif token_text in VERB_EXCEPTIONS:
-            processed_token = VERB_EXCEPTIONS[token_text].upper()
-        elif token_text in SPECIAL_GLOSSES:
-            processed_token = SPECIAL_GLOSSES[token_text]
-        else:
-           
-            if token.pos_ == "NUM" or (not token.is_punct and not token.is_stop):
-                processed_token = token.lemma_.upper()
+        # Check if token should be included in the ASL gloss
+        if token.pos_ not in excluded_pos:
+            if token_text in IMPORTANT_WORDS or token.is_stop:
+                processed_token = token.text.upper()
+            elif token_text in VERB_EXCEPTIONS:
+                processed_token = VERB_EXCEPTIONS[token_text].upper()
+            elif token_text in SPECIAL_GLOSSES:
+                processed_token = SPECIAL_GLOSSES[token_text]
+            else:
+                processed_token = token.lemma_.upper() if not token.is_punct else None
 
-       
-        if processed_token and processed_token != last_token:
-            filtered_tokens.append(processed_token)
-            last_token = processed_token
+            # Avoid duplicates
+            if processed_token and processed_token != last_token:
+                filtered_tokens.append(processed_token)
+                last_token = processed_token
 
-   
+    # Generate ASL gloss
     asl_gloss = " ".join(filtered_tokens)
 
+    # Prepare the output
     processed_data = {
         "text": input_text.upper(),
         "lemmas": filtered_tokens,
-        "pos_tags": [token.pos_.upper() for token in doc if not token.is_punct],
+        "pos_tags": [token.pos_.upper() for token in doc if token.pos_ not in excluded_pos],
         "asl_gloss": asl_gloss
     }
 
     return processed_data
+
 
 if __name__ == "__main__":
     try:

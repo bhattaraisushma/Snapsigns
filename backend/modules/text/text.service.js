@@ -31,6 +31,7 @@ async function fetchWithRetry(url, data, options, retries = 3) {
         try {
             console.log("Sending request to Hugging Face:", data);
             const response = await axios.post(url, data, options);
+            // console.log("Resposne is ",response)
             console.log("Hugging Face Model Response:", response.data);
            
             return response.data;
@@ -55,7 +56,7 @@ exports.processTextForASLGloss = async (inputText) => {
 
         const result = await fetchWithRetry(
             HF_API_URL,
-            { inputs: `Provide the ASL gloss in English only: ${processedText}` }, // Updated prompt
+            { inputs: `Provide the ASL gloss in English only: ${processedText}` }, 
             { headers: { Authorization: `Bearer ${HF_API_KEY}` } }
         );
 
@@ -75,19 +76,4 @@ if (require.main === module) {
         .then(result => console.log("Final ASL Gloss Output:", result))
         .catch(err => console.error("Error:", err));
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
