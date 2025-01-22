@@ -1,19 +1,19 @@
-import React from 'react'
-// import Character from '../Animated'
-import WordDisplay from '../list';
-import Character from '../Animated'
-import WordToASLConverter from '../gloss'
-const Homepage = () => {
-  return (
-    <div className='flex flex-col h-screen bg-purple-200 gap-5 justify-center items-center'>
-    
-      {/* <Character/> */}
-     <WordToASLConverter/>
-    
-      <input type="text" placeholder="Enter text to generate sign language" className='border-solid  text-center h-[5rem] w-[20rem] rounded-[4rem]' />
-      <WordDisplay/>
-    </div>
-  )
-}
 
-export default Homepage
+import React, { useState } from 'react';
+import WordDisplay from '../list';
+import WordToASLConverter from '../gloss';
+
+const Homepage = () => {
+  const [selectedWord, setSelectedWord] = useState("");
+
+  return (
+    <div className='flex flex-row h-screen bg-purple-200 items-center'>
+      <div className='h-screen w-[40%]'>
+        <WordDisplay setSelectedWord={setSelectedWord} />
+      </div>
+      <WordToASLConverter selectedWord={selectedWord} setSelectedWord={setSelectedWord} />
+    </div>
+  );
+};
+
+export default Homepage;
