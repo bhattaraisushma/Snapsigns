@@ -42,11 +42,11 @@ const Character = () => {
 
     // Cleanup
     return () => {
-      mountRef.current.removeChild(renderer.domElement);
+      // mountRef.current.removeChild(renderer.domElement);
     };
   }, []);
 
-  return <div ref={mountRef} style={{ width: '100%', height: '100vh' }} />;
+  return <div ref={mountRef} style={{ width: '100%', height: '100vh' }}  />;
 };
 
 export default Character;

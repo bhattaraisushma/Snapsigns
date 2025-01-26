@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { ArrowRightIcon } from "@heroicons/react/24/solid";
-
+import Character from '../Animated/character';
 const WordToASLConverter = ({ selectedWord, setSelectedWord }) => {
   const [word, setWord] = useState(selectedWord || "");
   const [aslGloss, setAslGloss] = useState("");
@@ -45,6 +45,7 @@ const WordToASLConverter = ({ selectedWord, setSelectedWord }) => {
 
   return (
     <div className="flex flex-col items-center justify-end mb-[6rem] w-full min-h-screen bg-purple-200">
+       <Character/>
       <div className="flex space-x-4 items-center">
         <input
           type="text"

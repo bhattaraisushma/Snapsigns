@@ -68,3 +68,155 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import pandas as pd
+import torch
+from transformers import T5ForConditionalGeneration, T5Tokenizer
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+
+# Load the dataset
+train_data = pd.read_csv("train.csv")
+val_data = pd.read_csv("val.csv")
+test_data = pd.read_csv("test.csv")
+
+# Create a T5 tokenizer
+tokenizer = T5Tokenizer.from_pretrained("t5-small")
+
+# Preprocess the data
+train_encodings = tokenizer(train_data["input_text"], return_tensors="pt", max_length=512, truncation=True, padding="max_length")
+val_encodings = tokenizer(val_data["input_text"], return_tensors="pt", max_length=512, truncation=True, padding="max_length")
+test_encodings = tokenizer(test_data["input_text"], return_tensors="pt", max_length=512, truncation=True, padding="max_length")
+
+# Create a custom dataset class
+class ASLDataset(torch.utils.data.Dataset):
+    def __init__(self, encodings, labels):
+        self.encodings = encodings
+        self.labels = labels
+
+    def __getitem__(self, idx):
+        item = {key: torch.tensor(val[idx]) for key, val in self.encodings.items()}
+        item["labels"] = torch.tensor(self.labels[idx])
+        return item
+
+    def __len__(self):
+        return len(self.labels)
+
+# Create dataset instances
+train_dataset = ASLDataset(train_encodings, train_data["asl_gloss"])
+val_dataset = ASLDataset(val_encodings, val_data["asl_gloss"])
+test_dataset = ASLDataset(test_encodings, test_data["asl_gloss"])
+
+# Create data loaders
+train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=16, shuffle=True)
+val_loader = torch.utils.data.DataLoader(val_dataset, batch_size=16, shuffle=False)
+test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=16, shuffle=False)
+
+# Load the pre-trained T5 model
+model = T5ForConditionalGeneration.from_pretrained("t5-small")
+
+# Set the device (GPU or CPU)
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+model.to(device)
+
+# Define the optimizer and scheduler
+optimizer = torch.optim.Adam(model.parameters(), lr=1e-5)
+scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=10)
+
+# Train the model
+for epoch in range(5):
+    model.train()
+    total_loss = 0
+    for batch in train_loader:
+        input_ids = batch["input_ids"].to(device)
+        attention_mask = batch["attention_mask"].to(device)
+        labels = batch["labels"].to(device)
+
+        optimizer.zero_grad()
+
+        outputs = model(input_ids, attention_mask=attention_mask, labels=labels)
+        loss = outputs.loss
+
+        loss.backward()
+        optimizer.step()
+
+        total_loss += loss.item()
+
+    scheduler.step()
+    print(f"Epoch {epoch+1}, Loss: {total_loss / len(train_loader)}")
+
+    model.eval()
+    with torch.no_grad():
+        total_loss = 0
+        predictions = []
+        labels = []
+        for batch in val_loader:
+            input_ids = batch["input_ids"].to(device)
+            attention_mask = batch["attention_mask"].to(device)
+            batch_labels = batch["labels"].to(device)
+
+            outputs = model(input_ids, attention_mask=attention_mask, labels=batch_labels)
+            loss = outputs.loss
+
+            total_loss += loss.item()
+
+            logits = outputs.logits
+            _, predicted = torch.max(logits, dim=1)
+            predictions.extend(predicted.cpu().numpy())
+            labels.extend(batch_labels.cpu().numpy())
+
+        print(f"Epoch {epoch+1}, Val Loss: {total_loss / len(val_loader)}")
+        print(f"Epoch {epoch+1}, Val Accuracy: {accuracy_score(labels, predictions)}")
+        print(f"Epoch {epoch+1}, Val Classification Report:\n{classification_report(labels, predictions)}")
+        print(f"Epoch {epoch+1}, Val Confusion Matrix:\n{confusion_matrix(labels, predictions)}")
+
+# Evaluate the model on the test set
+model.eval()
+with torch.no_grad():
+    total_loss = 0
+    predictions = []
+    labels = []
+    for batch in test_loader:
+        input_ids = batch["input_ids"].to(device)
+        attention_mask = batch["attention_mask"].to(device)
+        batch_labels = batch["labels"].to(device)
+
+        outputs = model(input_ids, attention_mask=attention_mask, labels=batch_labels)
+        loss = outputs.loss
+
+        total_loss += loss.item()
+
+        logits = outputs.logits
+        _, predicted = torch.max(logits, dim=1)
+        predictions.extend(predicted.cpu().numpy())
+        labels.extend(batch_labels.cpu().numpy())
+
+    print(f"Test Loss: {total_loss / len(test_loader)}")
+    print(f"Test Accuracy: {accuracy_score(labels, predictions)}")
+    print(f"Test Classification Report:\n{classification_report(labels, predictions)}")
+    print(f"Test Confusion Matrix:\n{confusion_matrix(labels, predictions)}")
