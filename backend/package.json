@@ -12,6 +12,8 @@
   "dependencies": {
     "@huggingface/hub": "^1.0.0",
     "@huggingface/transformers": "^3.2.4",
+    "@react-three/drei": "^9.121.3",
+    "@react-three/fiber": "^8.17.12",
     "axios": "^1.7.9",
     "bcryptjs": "^2.4.3",
     "compromise": "^14.14.3",
@@ -28,6 +30,7 @@
     "spacy": "^0.0.4",
     "stemmer": "^2.0.1",
     "stopword": "^3.1.4",
+    "three": "^0.172.0",
     "transformers": "^3.1.0"
   }
 }

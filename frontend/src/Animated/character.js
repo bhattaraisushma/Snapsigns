@@ -42,7 +42,7 @@ const Character = () => {
 
     // Cleanup
     return () => {
-      // mountRef.current.removeChild(renderer.domElement);
+       mountRef.current.removeChild(renderer.domElement);
     };
   }, []);
 
