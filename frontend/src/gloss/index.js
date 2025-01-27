@@ -154,13 +154,14 @@
 // export default WordToASLConverter;
 
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef,useContext } from "react";
 import axios from "axios";
 import { ArrowRightIcon } from "@heroicons/react/24/solid";
 import { Canvas } from "@react-three/fiber";
 import { AnimationMixer } from "three";
 import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
-
+import { context } from "../ContextAPI/context";
+import Character from '../Animated/character';
 const WordToASLConverter = ({ selectedWord, setSelectedWord }) => {
   const [word, setWord] = useState(selectedWord || "");
   const [aslGloss, setAslGloss] = useState("");
@@ -199,6 +200,7 @@ const WordToASLConverter = ({ selectedWord, setSelectedWord }) => {
     });
   };
 
+  const{isPlease,setIsPlease}=useContext(context);
   // Handle the ASL conversion
   const handleConvert = async () => {
     if (!word.trim()) {
@@ -243,12 +245,17 @@ const WordToASLConverter = ({ selectedWord, setSelectedWord }) => {
   
     const animationMap = {
       "Hello": "../Animations/Hello.fbx",
-      "Please": "../Animations/Please.fbx",
+      "Please": '/models/please.glb',
       // Add more mappings as needed
     };
   
     if (animationMap[normalizedGloss]) {
-      console.log(`Matched animation: ${animationMap[normalizedGloss]}`); // Log the mapped animation file
+      if(normalizedGloss==="Please"){
+        setIsPlease(true);
+        console.log("Please is true");
+      }
+      console.log(`Matched animation: ${animationMap[normalizedGloss]}`);
+       // Log the mapped animation file
       return animationMap[normalizedGloss];
     } else {
       console.log("No matching animation found for gloss:", gloss); // Debug if no match is found
@@ -260,6 +267,8 @@ const WordToASLConverter = ({ selectedWord, setSelectedWord }) => {
 
   return (
     <div className="flex flex-col items-center justify-end mb-[6rem] w-full min-h-screen bg-purple-200">
+     <Character/>
+     
       <div className="flex space-x-4 items-center">
         <input
           type="text"
@@ -285,11 +294,15 @@ const WordToASLConverter = ({ selectedWord, setSelectedWord }) => {
       )}
 
       <div style={{ width: "100%", height: "400px" }}>
-        <Canvas>
-          <ambientLight intensity={0.5} />
-          <spotLight position={[10, 10, 10]} />
-          {modelRef.current && <primitive object={modelRef.current} />}
-        </Canvas>
+      <Canvas>
+  <ambientLight intensity={0.5} />
+  <spotLight position={[10, 10, 10]} />
+  {modelRef.current ? (
+    <primitive object={modelRef.current} />
+  ) : (
+    ""
+  )}
+</Canvas>
       </div>
     </div>
   );
