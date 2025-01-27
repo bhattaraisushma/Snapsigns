@@ -46,7 +46,7 @@ const[newPath,setNewPath]=useState("");
 
     // Renderer
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setSize(800, 700); // Fixed size for the canvas
+    renderer.setSize(2000, 700); // Fixed size for the canvas
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setClearColor(0x000000, 0); // Transparent background
     mountRef.current.appendChild(renderer.domElement);

@@ -260,7 +260,7 @@ const WordToASLConverter = ({ selectedWord, setSelectedWord }) => {
       //  setIsHello(true)
       //  console.log("Hello is true");
       // }
-      console.log(`Matched animation from gloss index.js: ${animationMap[normalizedGloss]}`);
+      console.log(`Matched animation from gloss index,js: ${animationMap[normalizedGloss]}`);
        // Log the mapped animation file
       return animationMap[normalizedGloss];
     } else {
