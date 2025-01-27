@@ -200,7 +200,7 @@ const WordToASLConverter = ({ selectedWord, setSelectedWord }) => {
     });
   };
 
-  const{isPlease,setIsPlease}=useContext(context);
+  const{isPlease,setIsPlease,activeWord, setActiveWord}=useContext(context);
   // Handle the ASL conversion
   const handleConvert = async () => {
     if (!word.trim()) {
@@ -250,11 +250,17 @@ const WordToASLConverter = ({ selectedWord, setSelectedWord }) => {
     };
   
     if (animationMap[normalizedGloss]) {
-      if(normalizedGloss==="Please"){
-        setIsPlease(true);
-        console.log("Please is true");
-      }
-      console.log(`Matched animation: ${animationMap[normalizedGloss]}`);
+      setActiveWord(normalizedGloss);
+      // if(normalizedGloss==="Please"){
+      //   setIsPlease(true);
+
+      //   console.log("Please is true");
+      // }
+      // if(normalizedGloss==="Hello"){
+      //  setIsHello(true)
+      //  console.log("Hello is true");
+      // }
+      console.log(`Matched animation from gloss index.js: ${animationMap[normalizedGloss]}`);
        // Log the mapped animation file
       return animationMap[normalizedGloss];
     } else {
