@@ -105,8 +105,8 @@ const Character = () => {
     <div
       ref={mountRef}
       style={{
-        width: '100%',
-        height: '100vh',
+        width: '800px',
+        height: '700px',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center', // Center the canvas in the viewport

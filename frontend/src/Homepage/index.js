@@ -11,11 +11,11 @@ const Homepage = () => {
   return (
     <div className='flex flex-row h-screen bg-purple-200 items-center'>
     
-      <div className='h-screen w-[40%]'>
+      <div className='h-screen w-[50%]'>
     
         <WordDisplay setSelectedWord={setSelectedWord} />
       </div>
-      {/* <Character/> */}
+     
       <WordToASLConverter selectedWord={selectedWord} setSelectedWord={setSelectedWord} />
     </div>
   );
