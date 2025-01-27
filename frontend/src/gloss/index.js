@@ -111,44 +111,50 @@ const WordToASLConverter = ({ selectedWord, setSelectedWord }) => {
 
   return (
     <div className="flex flex-col items-center justify-end mb-[6rem] w-full min-h-screen bg-purple-200">
-     <Character/>
-     
-      <div className="flex space-x-4 items-center">
-        <input
-          type="text"
-          value={word}
-          onChange={(e) => {
-            setWord(e.target.value);
-            setSelectedWord("");
-          }}
-          placeholder="Enter text to generate sign language"
-          className="border-solid text-center h-[4rem] w-[20rem] rounded-[0.4rem]"
-        />
-        <button
-          onClick={handleConvert}
-          className="bg-blue-500 text-white px-3 py-3 h-[2.5rem] rounded-[0.4rem] flex items-center hover:bg-blue-600"
-          disabled={loading}
-        >
-          {loading ? "Converting..." : <ArrowRightIcon className="h-6 w-6" />}
-        </button>
-      </div>
+    <Character/>
+    
+    <div className="flex flex-col py-20 items-center justify-center w-full">
+  <div className="py-10"> {/* Adds vertical space between content */} </div>
+  
+  <div className="flex space-x-4 items-center">
+    <input
+      type="text"
+      value={word}
+      onChange={(e) => {
+        setWord(e.target.value);
+        setSelectedWord("");
+      }}
+      placeholder="Enter text to generate sign language"
+      className="border-solid text-center h-[4rem] w-[20rem] rounded-[0.4rem] mt-8"
+    />
+    
+    <button
+      onClick={handleConvert}
+      className="bg-blue-500 text-white px-3 py-3 h-[2.5rem] rounded-[0.4rem] flex items-center hover:bg-blue-600"
+      disabled={loading}
+    >
+      {loading ? "Converting..." : <ArrowRightIcon className="h-6 w-6" />}
+    </button>
+  </div>
+</div>
 
-      {aslGloss && (
-        <div className="mt-6 text-lg font-semibold text-gray-700">{aslGloss}</div>
-      )}
-
-      <div style={{ width: "100%", height: "400px" }}>
+    {aslGloss && (
+      <div className="mt-6 text-lg font-semibold text-gray-700">{aslGloss}</div>
+    )}
+  
+    <div style={{ width: "100%", height: "400px" }}>
       <Canvas>
-  <ambientLight intensity={0.5} />
-  <spotLight position={[10, 10, 10]} />
-  {modelRef.current ? (
-    <primitive object={modelRef.current} />
-  ) : (
-    ""
-  )}
-</Canvas>
-      </div>
+        <ambientLight intensity={0.5} />
+        <spotLight position={[10, 10, 10]} />
+        {modelRef.current ? (
+          <primitive object={modelRef.current} />
+        ) : (
+          ""
+        )}
+      </Canvas>
     </div>
+  </div>
+  
   );
 };
 
