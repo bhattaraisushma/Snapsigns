@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, useContext } from 'react';
+import React, {  useEffect, useRef, useContext } from 'react';
+import { useState } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { AnimationMixer } from 'three';
@@ -6,10 +7,29 @@ import { context } from '../ContextAPI/context'; // Ensure this is the correct c
 
 const Character = () => {
   const mountRef = useRef(null);
-  const { isPlease, setIsPlease } = useContext(context); // Access context
-
+  const { activeWord } = useContext(context); // Use a single variable to track the active word
+const[newPath,setNewPath]=useState("");
   useEffect(() => {
-    if (!isPlease) return; // Skip if "Please" is not active
+    console.log("word",activeWord);
+    if (!activeWord) return; // Do nothing if no word is active
+
+    // Map of words to model paths
+    const modelPaths = {
+      PLEASE: '/models/please.glb',
+      hello: '/models/hello.glb',
+      bye: '/models/bye.glb',
+    };
+
+    // Get the model path for the active word
+    const modelPath = modelPaths[activeWord.toUpperCase()];
+    setNewPath(modelPath);
+    
+    console.log("model path",newPath)
+    if (!modelPath) {
+   
+      console.error(`No model found for word: ${activeWord}`);
+      return;
+    }
 
     // Scene
     const scene = new THREE.Scene();
@@ -22,18 +42,16 @@ const Character = () => {
       0.1,
       1000
     );
-
-    // Adjust camera position to center the model properly
-    camera.position.set(0, 1.5, 4); // You can adjust the Z-axis for a better view of the model
+    camera.position.set(0, 1.5, 4); // Adjust camera position for a good view
 
     // Renderer
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true }); // Enable transparency
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(2000, 700); // Fixed size for the canvas
     renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setClearColor(0x000000, 0); // Set clear color to transparent (alpha: 0)
+    renderer.setClearColor(0x000000, 0); // Transparent background
     mountRef.current.appendChild(renderer.domElement);
 
-    // Light
+    // Lighting
     const light = new THREE.DirectionalLight(0xffffff, 1);
     light.position.set(2, 2, 2);
     scene.add(light);
@@ -52,13 +70,13 @@ const Character = () => {
     // Animation Mixer
     let mixer;
 
-    // Load 3D Model when isPlease is true
+    // Load the selected model
     const loader = new GLTFLoader();
     loader.load(
-      '/models/please.glb',
+      modelPath,
       (gltf) => {
         const model = gltf.scene;
-        model.position.set(0, 0, 0); // Center the model in the scene
+        model.position.set(0, 0, 0); // Center the model
         scene.add(model);
 
         // Setup animation if available
@@ -76,7 +94,7 @@ const Character = () => {
       }
     );
 
-    // Clock for Animation
+    // Animation Clock
     const clock = new THREE.Clock();
 
     // Animation Loop
@@ -93,13 +111,13 @@ const Character = () => {
     };
     animate();
 
-    // Cleanup on unmount or when isPlease changes
+    // Cleanup
     return () => {
       renderer.dispose();
       mountRef.current.removeChild(renderer.domElement);
       window.removeEventListener('resize', handleResize);
     };
-  }, [isPlease]); // Only run effect when `isPlease` changes
+  }, [activeWord]); // Re-run effect when the active word changes
 
   return (
     <div
