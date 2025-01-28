@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import WordDisplay from '../list';
 import WordToASLConverter from '../gloss';
 
-// import Character from '../Animated/character';
 
 const Homepage = () => {
   const [selectedWord, setSelectedWord] = useState("");

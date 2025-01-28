@@ -6,6 +6,7 @@ import { AnimationMixer } from "three";
 import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
 import { context } from "../ContextAPI/context";
 import Character from '../Animated/character';
+
 const WordToASLConverter = ({ selectedWord, setSelectedWord }) => {
   const [word, setWord] = useState(selectedWord || "");
   const [aslGloss, setAslGloss] = useState("");
@@ -14,7 +15,6 @@ const WordToASLConverter = ({ selectedWord, setSelectedWord }) => {
   const mixer = useRef(null);
   const [animationUrl, setAnimationUrl] = useState("");
 
-  // Update word when selectedWord changes
   useEffect(() => {
     if (selectedWord) {
       setWord(selectedWord);
@@ -27,7 +27,7 @@ const WordToASLConverter = ({ selectedWord, setSelectedWord }) => {
     }
   }, [animationUrl]);
 
-  // Load FBX model using FBXLoader
+
   const loadFBXModel = (url) => {
     const loader = new FBXLoader();
     loader.load(url, (fbx) => {
@@ -38,14 +38,14 @@ const WordToASLConverter = ({ selectedWord, setSelectedWord }) => {
       modelRef.current = fbx;
       if (mixer.current) {
         mixer.current = new AnimationMixer(fbx);
-        const action = mixer.current.clipAction(fbx.animations[0]); // Play the first animation
+        const action = mixer.current.clipAction(fbx.animations[0]); 
         action.play();
       }
     });
   };
 
   const{isPlease,setIsPlease,activeWord, setActiveWord}=useContext(context);
-  // Handle the ASL conversion
+  
   const handleConvert = async () => {
     if (!word.trim()) {
       setAslGloss("Please enter a word!");
@@ -56,7 +56,7 @@ const WordToASLConverter = ({ selectedWord, setSelectedWord }) => {
     setAslGloss("");
 
     try {
-      const token = "your-auth-token"; // Replace with actual token
+      const token = "your-auth-token"; 
       const response = await axios.post(
         "http://localhost:9005/text/process-text",
         { text: word },
@@ -69,7 +69,7 @@ const WordToASLConverter = ({ selectedWord, setSelectedWord }) => {
       const gloss = response.data.result[0].translation_text.split(": ").pop();
       setAslGloss(gloss);
 
-      // Map the gloss to an animation
+      
       const animationFile = mapGlossToAnimation(gloss);
       setAnimationUrl(animationFile);
     } catch (error) {
@@ -80,36 +80,28 @@ const WordToASLConverter = ({ selectedWord, setSelectedWord }) => {
     }
   };
 
-  // Map gloss to the corresponding animation file
-  const mapGlossToAnimation = (gloss) => {
-    console.log("Received gloss:", gloss); // Debugging step
   
-    // Normalize the gloss: Convert to lowercase and capitalize the first letter
+  const mapGlossToAnimation = (gloss) => {
+    console.log("Received gloss:", gloss); 
+  
+    
     const normalizedGloss = gloss.toLowerCase().replace(/^\w/, (c) => c.toUpperCase());
   
     const animationMap = {
-      "Hello": "../Animations/Hello.fbx",
+      "Hello": "../Animations/Hello.glb",
       "Please": '/models/please.glb',
-      // Add more mappings as needed
+      
     };
   
     if (animationMap[normalizedGloss]) {
       setActiveWord(normalizedGloss);
-      // if(normalizedGloss==="Please"){
-      //   setIsPlease(true);
-
-      //   console.log("Please is true");
-      // }
-      // if(normalizedGloss==="Hello"){
-      //  setIsHello(true)
-      //  console.log("Hello is true");
-      // }
+   
       console.log(`Matched animation from gloss index,js: ${animationMap[normalizedGloss]}`);
-       // Log the mapped animation file
+
       return animationMap[normalizedGloss];
     } else {
-      console.log("No matching animation found for gloss:", gloss); // Debug if no match is found
-      return ""; // Return empty string if no mapping exists
+      console.log("No matching animation found for gloss:", gloss); 
+      return "";
     }
   };
   
@@ -120,7 +112,7 @@ const WordToASLConverter = ({ selectedWord, setSelectedWord }) => {
     <Character/>
     
     <div className="flex flex-col py-20 items-center justify-center w-full">
-  <div className="py-10"> {/* Adds vertical space between content */} </div>
+  <div className="py-10">  </div>
   
   <div className="flex space-x-4 items-center">
     <input
