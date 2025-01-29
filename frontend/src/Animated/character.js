@@ -8,18 +8,18 @@ const Character = () => {
   const mountRef = useRef(null);
   const { activeWord } = useContext(context); 
 const[newPath,setNewPath]=useState("");
-  useEffect(() => {
+
+
+ useEffect(() => {
     console.log("word",activeWord);
     if (!activeWord) return; 
-
 
     const modelPaths = {
       PLEASE: '/models/finalplease.glb',
       HELLO: '/models/finalhello.glb',
-      bye: '/models/bye.glb',
+      
     };
 
-    
     const modelPath = modelPaths[activeWord.toUpperCase()];
     setNewPath(modelPath);
     

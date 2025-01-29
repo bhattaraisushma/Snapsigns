@@ -16,7 +16,7 @@ const BlinkCharacter = () => {
     renderer.setSize(800, 700);
     renderer.setPixelRatio(window.devicePixelRatio);
 
-    // Ensure mountRef.current is valid before appending
+  
     if (mountRef.current) {
       mountRef.current.appendChild(renderer.domElement);
     }
@@ -49,11 +49,11 @@ const BlinkCharacter = () => {
     animate();
 
     return () => {
-      // Safe cleanup: check if mountRef.current is still available
+
       if (mountRef.current) {
         mountRef.current.removeChild(renderer.domElement);
       }
-      renderer.dispose(); // Dispose renderer
+      renderer.dispose(); 
     };
   }, []);
 

@@ -86,8 +86,8 @@ const WordToASLConverter = ({ selectedWord, setSelectedWord }) => {
     const normalizedGloss = gloss.toLowerCase().replace(/^\w/, (c) => c.toUpperCase());
 
     const animationMap = {
-      "Hello": "../Animations/Hello.glb",
-      "Please": '/models/please.glb'
+      "Hello": "/models/finalhello.glb",
+      "Please": '/models/finalplease.glb'
     };
 
     if (animationMap[normalizedGloss]) {
