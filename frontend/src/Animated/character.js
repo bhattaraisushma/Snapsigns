@@ -38,7 +38,7 @@ const[newPath,setNewPath]=useState("");
     const camera = new THREE.PerspectiveCamera(
       75,
       window.innerWidth / window.innerHeight,
-      0.1,
+      0.2,
       1000
     );
     camera.position.set(0, 1.5, 4); 
@@ -69,7 +69,7 @@ const[newPath,setNewPath]=useState("");
    
     let mixer;
 
-   
+    
     const loader = new GLTFLoader();
     loader.load(
       modelPath,
@@ -78,7 +78,9 @@ const[newPath,setNewPath]=useState("");
         model.position.set(0, 0, 0); 
         scene.add(model);
 
-        
+        const scaleFactor = 2;  
+    model.scale.set(scaleFactor, scaleFactor, scaleFactor); 
+
         if (gltf.animations && gltf.animations.length > 0) {
           mixer = new AnimationMixer(model);
           gltf.animations.forEach((clip) => {
@@ -132,3 +134,5 @@ const[newPath,setNewPath]=useState("");
 };
 
 export default Character;
+
+

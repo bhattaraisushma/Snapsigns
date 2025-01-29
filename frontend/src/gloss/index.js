@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef,useContext } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import axios from "axios";
 import { ArrowRightIcon } from "@heroicons/react/24/solid";
 import { Canvas } from "@react-three/fiber";
@@ -6,6 +6,7 @@ import { AnimationMixer } from "three";
 import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
 import { context } from "../ContextAPI/context";
 import Character from '../Animated/character';
+import BlinkCharacter from "../blink.js";
 
 const WordToASLConverter = ({ selectedWord, setSelectedWord }) => {
   const [word, setWord] = useState(selectedWord || "");
@@ -14,6 +15,7 @@ const WordToASLConverter = ({ selectedWord, setSelectedWord }) => {
   const modelRef = useRef(null);
   const mixer = useRef(null);
   const [animationUrl, setAnimationUrl] = useState("");
+  const { isPlease, setIsPlease, activeWord, setActiveWord } = useContext(context);
 
   useEffect(() => {
     if (selectedWord) {
@@ -27,8 +29,9 @@ const WordToASLConverter = ({ selectedWord, setSelectedWord }) => {
     }
   }, [animationUrl]);
 
-
   const loadFBXModel = (url) => {
+    if (!url) return;
+
     const loader = new FBXLoader();
     loader.load(url, (fbx) => {
       if (modelRef.current) {
@@ -38,14 +41,12 @@ const WordToASLConverter = ({ selectedWord, setSelectedWord }) => {
       modelRef.current = fbx;
       if (mixer.current) {
         mixer.current = new AnimationMixer(fbx);
-        const action = mixer.current.clipAction(fbx.animations[0]); 
+        const action = mixer.current.clipAction(fbx.animations[0]);
         action.play();
       }
     });
   };
 
-  const{isPlease,setIsPlease,activeWord, setActiveWord}=useContext(context);
-  
   const handleConvert = async () => {
     if (!word.trim()) {
       setAslGloss("Please enter a word!");
@@ -69,7 +70,6 @@ const WordToASLConverter = ({ selectedWord, setSelectedWord }) => {
       const gloss = response.data.result[0].translation_text.split(": ").pop();
       setAslGloss(gloss);
 
-      
       const animationFile = mapGlossToAnimation(gloss);
       setAnimationUrl(animationFile);
     } catch (error) {
@@ -80,79 +80,68 @@ const WordToASLConverter = ({ selectedWord, setSelectedWord }) => {
     }
   };
 
-  
   const mapGlossToAnimation = (gloss) => {
-    console.log("Received gloss:", gloss); 
-  
-    
+    console.log("Received gloss:", gloss);
+
     const normalizedGloss = gloss.toLowerCase().replace(/^\w/, (c) => c.toUpperCase());
-  
+
     const animationMap = {
       "Hello": "../Animations/Hello.glb",
-      "Please": '/models/please.glb',
-      
+      "Please": '/models/please.glb'
     };
-  
+
     if (animationMap[normalizedGloss]) {
       setActiveWord(normalizedGloss);
-   
-      console.log(`Matched animation from gloss index,js: ${animationMap[normalizedGloss]}`);
-
+      console.log(`Matched animation from gloss: ${animationMap[normalizedGloss]}`);
       return animationMap[normalizedGloss];
     } else {
-      console.log("No matching animation found for gloss:", gloss); 
+      console.log("No matching animation found for gloss:", gloss);
       return "";
     }
   };
-  
-  
 
   return (
-    <div className="flex flex-col items-center justify-end mb-[6rem] w-full min-h-screen bg-purple-200">
-    <Character/>
-    
-    <div className="flex flex-col py-20 items-center justify-center w-full">
-  <div className="py-10">  </div>
-  
-  <div className="flex space-x-4 items-center">
-    <input
-      type="text"
-      value={word}
-      onChange={(e) => {
-        setWord(e.target.value);
-        setSelectedWord("");
-      }}
-      placeholder="Enter text to generate sign language"
-      className="border-solid text-center h-[4rem] w-[20rem] rounded-[0.4rem] mt-8"
-    />
-    
-    <button
-      onClick={handleConvert}
-      className="bg-blue-500 text-white px-3 py-3 h-[2.5rem] rounded-[0.4rem] flex items-center hover:bg-blue-600"
-      disabled={loading}
-    >
-      {loading ? "Converting..." : <ArrowRightIcon className="h-6 w-6" />}
-    </button>
-  </div>
-</div>
-
-    {aslGloss && (
-      <div className="mt-6 text-lg font-semibold text-gray-700">{aslGloss}</div>
-    )}
-  
-    <div style={{ width: "100%", height: "400px" }}>
-      <Canvas>
-        <ambientLight intensity={0.5} />
-        <spotLight position={[10, 10, 10]} />
-        {modelRef.current ? (
-          <primitive object={modelRef.current} />
+    <div className="flex flex-col items-center justify-start w-full min-h-screen bg-purple-200">
+     
+      <div className="mt-6">
+        {!selectedWord || !animationUrl ? (
+          <BlinkCharacter />
         ) : (
-          ""
+          <>
+            <Character />
+            <div style={{ width: "100%", height: "400px" }}>
+              <Canvas>
+                <ambientLight intensity={0.5} />
+                <spotLight position={[10, 10, 10]} />
+                {modelRef.current ? <primitive object={modelRef.current} /> : null}
+              </Canvas>
+            </div>
+          </>
         )}
-      </Canvas>
+      </div>
+      
+      <div className="flex space-x-4 items-center mt-8">
+        <input
+          type="text"
+          value={word}
+          onChange={(e) => {
+            setWord(e.target.value);
+            setSelectedWord("");
+          }}
+          placeholder="Enter text to generate sign language"
+          className="border-solid text-center h-[4rem] w-[20rem] rounded-[0.4rem]"
+        />
+        <button
+          onClick={handleConvert}
+          className="bg-blue-500 text-white px-3 py-3 h-[2.5rem] rounded-[0.4rem] flex items-center hover:bg-blue-600"
+          disabled={loading}
+        >
+          {loading ? "Converting..." : <ArrowRightIcon className="h-6 w-6" />}
+        </button>
+      </div>
+
+      {aslGloss && <div className="mt-6 text-lg font-semibold text-gray-700">{aslGloss}</div>}
     </div>
-  </div>
-  
   );
 };
 

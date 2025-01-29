@@ -14,7 +14,7 @@ const Homepage = () => {
     
         <WordDisplay setSelectedWord={setSelectedWord} />
       </div>
-     
+    
       <WordToASLConverter selectedWord={selectedWord} setSelectedWord={setSelectedWord} />
     </div>
   );
