@@ -71,8 +71,7 @@ const[newPath,setNewPath]=useState("");
     let mixer;
 
     // Load the selected model
-    const loader = new GLTFLoader();
-    loader.load(
+    loaders.load(
       modelPath,
       (gltf) => {
         const model = gltf.scene;
