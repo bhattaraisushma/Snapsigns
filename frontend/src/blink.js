@@ -25,7 +25,7 @@ const BlinkCharacter = () => {
     light.position.set(2, 2, 2);
     scene.add(light);
 
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 2);
     scene.add(ambientLight);
 
     const loader = new GLTFLoader();
