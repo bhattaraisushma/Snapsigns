@@ -142,21 +142,28 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { AnimationMixer } from 'three';
 import { context } from '../ContextAPI/context';
 
+
 const Character = () => {
   const mountRef = useRef(null);
   const { activeWord } = useContext(context);
   const [newPath, setNewPath] = useState("");
+  const { activeWord } = useContext(context);
+  const [newPath, setNewPath] = useState("");
 
+  useEffect(() => {
+    if (!activeWord) return;
   useEffect(() => {
     if (!activeWord) return;
 
     const modelPaths = {
       PLEASE: '/models/finalplease.glb',
       HELLO: '/models/untitledtem.glb',
+      HELLO: '/models/finalhello.glb',
     };
 
     const modelPath = modelPaths[activeWord.toUpperCase()];
     setNewPath(modelPath);
+
 
     if (!modelPath) {
       console.error(`No model found for word: ${activeWord}`);
@@ -166,26 +173,33 @@ const Character = () => {
     // Scene Setup
     const scene = new THREE.Scene();
     scene.background = null;
+    scene.background = null;
 
     // Camera (Matching BlinkCharacter.js aspect ratio)
     const camera = new THREE.PerspectiveCamera(75, 800 / 700, 0.2, 1000);
     camera.position.set(0, 1.5, 4);
+    const camera = new THREE.PerspectiveCamera(75, 800 / 700, 0.2, 1000);
+    camera.position.set(0, 1.5, 4);
 
     // Renderer
+    
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(800, 700); // Same as BlinkCharacter.js
     renderer.setPixelRatio(window.devicePixelRatio);
     mountRef.current.appendChild(renderer.domElement);
 
+    
     // Lighting
     const light = new THREE.DirectionalLight(0xffffff, 1);
     light.position.set(2, 2, 2);
     scene.add(light);
 
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 2);
     scene.add(ambientLight);
 
+
     let mixer;
+    let clock = new THREE.Clock();
 
     // Load Model
     const loader = new GLTFLoader();
@@ -193,6 +207,8 @@ const Character = () => {
       modelPath,
       (gltf) => {
         const model = gltf.scene;
+        model.position.set(0, 0, 0);
+        model.scale.set(2, 2, 2);
         model.position.set(0, 0, 0);
         model.scale.set(2, 2, 2);
         scene.add(model);
@@ -234,6 +250,8 @@ const Character = () => {
     };
   }, [activeWord]);
 
+  }, [activeWord]);
+
   return (
     <div
       ref={mountRef}
@@ -242,6 +260,7 @@ const Character = () => {
         height: '1000px',
         display: 'flex',
         justifyContent: 'center',
+        alignItems: 'center',
         alignItems: 'center',
       }}
     />

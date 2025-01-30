@@ -1,7 +1,12 @@
 const Joi=require("joi")
 
     const textDTO=Joi.object({
-    text:Joi.string().min(1).required(),
+    text:Joi.string()
+    .pattern(/^[a-zA-Z " "]+$/)
+    .min(1)
+    .required()
+  
+  
     
 
 })

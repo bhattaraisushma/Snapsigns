@@ -1,17 +1,19 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import axios from "axios";
+import * as THREE from "three";
 import { ArrowRightIcon } from "@heroicons/react/24/solid";
 import { Canvas } from "@react-three/fiber";
 import { AnimationMixer } from "three";
 import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
 import { context } from "../ContextAPI/context";
-import Character from '../Animated/character';
+import Character from "../Animated/character";
 import BlinkCharacter from "../blink.js";
 
 const WordToASLConverter = ({ selectedWord, setSelectedWord }) => {
   const [word, setWord] = useState(selectedWord || "");
   const [aslGloss, setAslGloss] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showModal, setShowModal] = useState(false); 
   const modelRef = useRef(null);
   const mixer = useRef(null);
   const [animationUrl, setAnimationUrl] = useState("");
@@ -42,6 +44,8 @@ const WordToASLConverter = ({ selectedWord, setSelectedWord }) => {
       if (mixer.current) {
         mixer.current = new AnimationMixer(fbx);
         const action = mixer.current.clipAction(fbx.animations[0]);
+        action.setLoop(THREE.LoopOnce);
+        action.clampWhenFinished = true;
         action.play();
       }
     });
@@ -49,15 +53,17 @@ const WordToASLConverter = ({ selectedWord, setSelectedWord }) => {
 
   const handleConvert = async () => {
     if (!word.trim()) {
-      setAslGloss("Please enter a word!");
+      setAslGloss("");
+      setShowModal(true);
       return;
     }
 
     setLoading(true);
     setAslGloss("");
+    setShowModal(false);
 
     try {
-      const token = "your-auth-token"; 
+      const token = "your-auth-token";
       const response = await axios.post(
         "http://localhost:9005/text/process-text",
         { text: word },
@@ -71,9 +77,12 @@ const WordToASLConverter = ({ selectedWord, setSelectedWord }) => {
       setAslGloss(gloss);
 
       const animationFile = mapGlossToAnimation(gloss);
+      if (!animationFile) {
+        setShowModal(true); 
+      }
       setAnimationUrl(animationFile);
     } catch (error) {
-      setAslGloss(error.response?.data?.message || "Error converting text.");
+      setShowModal(true);
       console.error("Error response:", error.response?.data || error.message);
     } finally {
       setLoading(false);
@@ -81,45 +90,54 @@ const WordToASLConverter = ({ selectedWord, setSelectedWord }) => {
   };
 
   const mapGlossToAnimation = (gloss) => {
-    console.log("Received gloss:", gloss);
-
     const normalizedGloss = gloss.toLowerCase().replace(/^\w/, (c) => c.toUpperCase());
-    console.log("HeLLO")
     const animationMap = {
-      "Hello": "/models/finalhello.glb",
-      "Please": '/models/finalplease.glb'
+      Hello: "/models/finalhello.glb",
+      Please: "/models/finalplease.glb",
     };
 
     if (animationMap[normalizedGloss]) {
       setActiveWord(normalizedGloss);
-      console.log(`Matched animation from gloss: ${animationMap[normalizedGloss]}`);
       return animationMap[normalizedGloss];
     } else {
-      console.log("No matching animation found for gloss:", gloss);
       return "";
     }
   };
 
   return (
-    <div className="flex flex-col items-center justify-start w-full min-h-screen bg-purple-200">
-     
+    <div className="flex flex-col items-center justify-start w-full min-h-screen bg-purple-20">
+      {showModal && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+          <div className="bg-white p-8 rounded-lg shadow-lg">
+            <p className="text-xl font-medium mb-4">No Animation Found!</p>
+            <p className="text-gray-700">No matching animation available for this word.</p>
+            <button
+              className="bg-blue-600 text-white px-4 py-2 rounded-md mt-4"
+              onClick={() => setShowModal(false)}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="mt-6">
-        {!selectedWord || !animationUrl ? (
+        {!selectedWord ? (
           <BlinkCharacter />
         ) : (
           <>
             <Character />
             <div style={{ width: "100%", height: "400px" }}>
               <Canvas>
-                <ambientLight intensity={0.5} />
-                <spotLight position={[10, 10, 10]} />
+                <ambientLight intensity={1} />
+                <spotLight position={[50, 50, 50]} />
                 {modelRef.current ? <primitive object={modelRef.current} /> : null}
               </Canvas>
             </div>
           </>
         )}
       </div>
-      
+
       <div className="flex space-x-4 items-center mt-8">
         <input
           type="text"

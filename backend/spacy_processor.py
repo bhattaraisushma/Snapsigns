@@ -34,24 +34,24 @@ def process_text(input_text: str) -> dict:
     subject_tokens = []
     verb_tokens = []
     object_tokens = []
-    location_tokens = []  # A new list for handling location (like "home")
+    location_tokens = [] 
 
     for token in doc:
         token_text = token.text.lower()
 
-        # Handle temporal words (e.g., "monday," "tomorrow")
+     
         if token_text in temporal_words:
             temporal_tokens.append(token.text.upper())
             continue
 
-        # Skip words that should be excluded from ASL gloss (auxiliary verbs, prepositions, articles)
+      
         if token_text in PREPOSITIONS_AUX_VERBS or token_text == "the":
             continue
 
-        # Process other tokens for ASL gloss
+       
         if token.pos_ not in excluded_pos:
             if token_text in {"i", "me"}:
-                subject_tokens.append("ME")  # ASL generally uses "ME" for these words
+                subject_tokens.append("ME")  
             elif token_text in {"we", "us"}:
                 subject_tokens.append("WE")
             elif token_text in IMPORTANT_WORDS:
@@ -59,18 +59,18 @@ def process_text(input_text: str) -> dict:
             elif token.pos_ == "VERB":
                 verb = VERB_EXCEPTIONS.get(token_text, token.lemma_).upper()
                 verb_tokens.append(verb)
-            elif token_text in {"home", "store", "park", "office"}:  # Include other location words here
+            elif token_text in {"home", "store", "park", "office"}:  
                 location_tokens.append(token.text.upper())
             else:
                 object_tokens.append(token.lemma_.upper())
 
-    # Sort temporal tokens to ensure correct order
+   
     temporal_tokens = sort_temporal_tokens(temporal_tokens)
 
-    # Build ASL gloss: Temporal -> Subject -> Verb -> Location -> Object
+   
     asl_gloss = " ".join(temporal_tokens + subject_tokens + verb_tokens + location_tokens + object_tokens)
 
-    # Prepare the output
+  
     processed_data = {
         "text": input_text.upper(),
         "lemmas": temporal_tokens + subject_tokens + verb_tokens + location_tokens + object_tokens,
@@ -81,7 +81,7 @@ def process_text(input_text: str) -> dict:
 
 if __name__ == "__main__":
     try:
-        # Check for input text
+      
         if len(sys.argv) < 2:
             raise ValueError("No input text provided. Please provide text as a command-line argument.")
         
