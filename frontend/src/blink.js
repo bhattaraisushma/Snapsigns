@@ -6,7 +6,7 @@ const BlinkCharacter = () => {
   const mountRef = useRef(null);
 
   useEffect(() => {
-    const modelPath = "/models/FINALBLINK.glb 2";
+    const modelPath = "/models/blink.glb";
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, 800 / 700, 0.2, 1000);
