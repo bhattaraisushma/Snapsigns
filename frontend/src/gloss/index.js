@@ -47,6 +47,8 @@ const WordToASLConverter = ({ selectedWord, setSelectedWord }) => {
     });
   };
 
+
+
   const handleConvert = async () => {
     if (!word.trim()) {
       setAslGloss("Please enter a word!");
@@ -100,19 +102,43 @@ const WordToASLConverter = ({ selectedWord, setSelectedWord }) => {
     }
   };
 
+
+ 
+  //   console.log("Received gloss:", gloss);
+  
+  //   const normalizedGloss = gloss.toLowerCase().replace(/^\w/, (c) => c.toUpperCase());
+    
+  //   const animationMap = {
+  //     "Hello": "/models/finalhello.glb",
+  //     "Please": "/models/finalplease.glb",
+  //   };
+  
+  //   if (animationMap[normalizedGloss]) {
+  //     setActiveWord(normalizedGloss);
+  //     console.log(`Matched animation from gloss: ${animationMap[normalizedGloss]}`);
+      
+      
+  //     setAnimationUrl(""); 
+  //     setTimeout(() => setAnimationUrl(animationMap[normalizedGloss]), 50); 
+  //   } else {
+  //     console.log("No matching animation found for gloss:", gloss);
+  //     setAnimationUrl("");
+  //   }
+  // };
+  
   return (
-    <div className="flex flex-col items-center justify-start w-full min-h-screen bg-purple-200">
+    <div className="flex flex-col items-center justify-start w-full min-h-screen bg-purple-20 20">
      
       <div className="mt-6">
-        {!selectedWord || !animationUrl ? (
+        {!selectedWord ? (
           <BlinkCharacter />
         ) : (
           <>
             <Character />
             <div style={{ width: "100%", height: "400px" }}>
               <Canvas>
-                <ambientLight intensity={0.5} />
-                <spotLight position={[10, 10, 10]} />
+                <ambientLight intensity={1} />
+                <spotLight position={[50, 50, 50]} />
                 {modelRef.current ? <primitive object={modelRef.current} /> : null}
               </Canvas>
             </div>
@@ -146,3 +172,5 @@ const WordToASLConverter = ({ selectedWord, setSelectedWord }) => {
 };
 
 export default WordToASLConverter;
+
+
