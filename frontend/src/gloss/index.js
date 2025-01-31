@@ -92,8 +92,8 @@ const WordToASLConverter = ({ selectedWord, setSelectedWord }) => {
   const mapGlossToAnimation = (gloss) => {
     const normalizedGloss = gloss.toLowerCase().replace(/^\w/, (c) => c.toUpperCase());
     const animationMap = {
-      Hello: "/models/finalhello.glb",
-      Please: "/models/finalplease.glb",
+      Hello: "/models/hello.glb",
+      Please: "/models/please.glb",
       Love:"/models/love.glb",
     };
 
@@ -128,7 +128,7 @@ const WordToASLConverter = ({ selectedWord, setSelectedWord }) => {
         ) : (
           <>
             <Character />
-            <div style={{ width: "100px", height: "100px" }}>
+            <div style={{ width: "50px", height: "50px" }}>
               <Canvas>
                 <ambientLight intensity={1} />
                 <spotLight position={[50, 50, 50]} />
@@ -159,7 +159,7 @@ const WordToASLConverter = ({ selectedWord, setSelectedWord }) => {
         </button>
       </div>
 
-      {aslGloss && <div className="mt-1 text-lg font-semibold text-gray-700">{aslGloss}</div>}
+      {aslGloss && <div className="mt-0 text-lg font-semibold text-gray-700">{aslGloss}</div>}
     </div>  );
 };
 
