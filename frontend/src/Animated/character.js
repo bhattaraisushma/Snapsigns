@@ -17,9 +17,9 @@ const[newPath,setNewPath]=useState("");
     const modelPaths = {
       PLEASE: '/models/finalplease.glb',
       HELLO: '/models/finalhello.glb',
-      bye: '/models/bye.glb',
-      PLEASE: '/models/please.glb',
-      HELLO: '/models/hello.glb',
+    BYE: '/models/bye.glb',
+      // PLEASE: '/models/please.glb',
+      // HELLO: '/models/hello.glb',
       STOP: '/models/stop.glb',
     };
 
