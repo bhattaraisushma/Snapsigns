@@ -15,7 +15,7 @@ const Character = () => {
     if (!activeWord) return;
 
     const modelPaths = {
-      PLEASE: '/models/please1.glb',
+      PLEASE: '/models/please.glb',
       HELLO: '/models/hello.glb',
       LOVE: '/models/love.glb',
     };
@@ -41,7 +41,7 @@ const Character = () => {
     camera.position.set(0, 1.5, 4); 
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setSize(2000, 700); 
+    renderer.setSize(800, 700); 
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setClearColor(0x000000, 0); 
     mountRef.current.appendChild(renderer.domElement);
@@ -67,7 +67,7 @@ const Character = () => {
       modelPath,
       (gltf) => {
         const model = gltf.scene;
-        model.position.set(0, 2, 0);
+        model.position.set(0, 2, 0 );
         model.scale.set(2.5, 2.5, 2.5);  
         scene.add(model);
 
