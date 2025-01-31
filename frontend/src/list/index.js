@@ -1,3 +1,5 @@
+// list/index.js
+
 import React from "react";
 
 function WordDisplay({ setSelectedWord }) {
@@ -22,3 +24,4 @@ function WordDisplay({ setSelectedWord }) {
 }
 
 export default WordDisplay;
+

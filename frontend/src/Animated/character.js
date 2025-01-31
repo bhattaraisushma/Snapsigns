@@ -4,7 +4,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { AnimationMixer } from 'three';
 import { context } from '../ContextAPI/context';
 
-const Character = () => {
+ const Character = () => {
   const mountRef = useRef(null);
   const { activeWord } = useContext(context);
   const [newPath, setNewPath] = useState("");
@@ -19,26 +19,23 @@ const Character = () => {
 
     const modelPath = modelPaths[activeWord.toUpperCase()];
     setNewPath(modelPath);
-
-    if (!modelPath) {
+      if (!modelPath) {
       console.error(`No model found for word: ${activeWord}`);
       return;
     }
 
-   
     const scene = new THREE.Scene();
     scene.background = null;
 
     const camera = new THREE.PerspectiveCamera(75, 800 / 700, 0.2, 1000);
-    camera.position.set(0, 1.5, 4);
+    camera.position.set(0, 2.5, 6); 
+    camera.lookAt(new THREE.Vector3(0, 1.5, 0));
 
-    
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setSize(800, 700); 
+    renderer.setSize(800, 700);
     renderer.setPixelRatio(window.devicePixelRatio);
     mountRef.current.appendChild(renderer.domElement);
 
-    
     const light = new THREE.DirectionalLight(0xffffff, 1);
     light.position.set(2, 2, 2);
     scene.add(light);
@@ -49,29 +46,28 @@ const Character = () => {
     let mixer;
     let clock = new THREE.Clock();
 
-   
     const loader = new GLTFLoader();
     loader.load(
       modelPath,
       (gltf) => {
         const model = gltf.scene;
         model.position.set(0, 0, 0);
-        model.scale.set(2, 2, 2);
+        
+      
+        const scaleFactor =3;
+        model.scale.set(scaleFactor, scaleFactor, scaleFactor);
         scene.add(model);
 
         if (gltf.animations && gltf.animations.length > 0) {
           mixer = new AnimationMixer(model);
 
-         
           gltf.animations.forEach((clip) => {
             const action = mixer.clipAction(clip);
-
-           
             if (clip.name === "blink") {
               action.setLoop(THREE.LoopOnce);
-              action.clampWhenFinished = true; 
+              action.clampWhenFinished = true;
             } else {
-              action.setLoop(THREE.LoopOnce); 
+              action.setLoop(THREE.LoopOnce);
               action.clampWhenFinished = true;
             }
             action.play();
@@ -83,7 +79,6 @@ const Character = () => {
             const delta = clock.getDelta();
             mixer.update(delta);
 
-            
             if (mixer.clipAction(gltf.animations[0]).isRunning()) {
               requestAnimationFrame(animate);
             }
@@ -91,8 +86,7 @@ const Character = () => {
 
           renderer.render(scene, camera);
         };
-        
-     
+
         animate();
       },
       undefined,
@@ -101,7 +95,6 @@ const Character = () => {
       }
     );
 
-   
     return () => {
       renderer.dispose();
       mountRef.current.removeChild(renderer.domElement);
