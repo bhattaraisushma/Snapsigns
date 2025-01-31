@@ -6,7 +6,7 @@ const BlinkCharacter = () => {
   const mountRef = useRef(null);
 
   useEffect(() => {
-    const modelPath = "/models/blink.glb"; // Ensure the correct model path
+    const modelPath = "/models/finalblink.glb"; // Ensure the correct model path
 
     // Scene setup
     const scene = new THREE.Scene();
