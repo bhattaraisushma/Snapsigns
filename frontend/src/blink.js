@@ -1,0 +1,63 @@
+import React, { useEffect, useRef } from "react";
+import * as THREE from "three";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+
+const BlinkCharacter = () => {
+  const mountRef = useRef(null);
+
+  useEffect(() => {
+    const modelPath = "/models/blink.glb";
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, 800 / 700, 0.2, 1000);
+    camera.position.set(0, 1.5, 4);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(800, 700);
+    renderer.setPixelRatio(window.devicePixelRatio);
+
+  
+    if (mountRef.current) {
+      mountRef.current.appendChild(renderer.domElement);
+    }
+
+    const light = new THREE.DirectionalLight(0xffffff, 1);
+    light.position.set(2, 2, 2);
+    scene.add(light);
+
+    const ambientLight = new THREE.AmbientLight(0xffffff, 2);
+    scene.add(ambientLight);
+
+    const loader = new GLTFLoader();
+    loader.load(
+      modelPath,
+      (gltf) => {
+        const model = gltf.scene;
+        model.position.set(0, 0, 0);
+        const scaleFactor = 2.5;
+        model.scale.set(scaleFactor, scaleFactor, scaleFactor);
+        scene.add(model);
+      },
+      undefined,
+      (error) => console.error("Error loading Blink model:", error)
+    );
+
+    const animate = () => {
+      requestAnimationFrame(animate);
+      renderer.render(scene, camera);
+    };
+    animate();
+
+    return () => {
+
+      if (mountRef.current) {
+        mountRef.current.removeChild(renderer.domElement);
+      }
+      renderer.dispose(); 
+    };
+  }, []);
+
+  return <div ref={mountRef} style={{ width: "800px", height: "700px" }} />;
+};
+
+export default BlinkCharacter;

@@ -10,7 +10,7 @@ const processText = (inputText) => {
         exec(`python spacy_processor.py "${inputText}"`, (err, stdout, stderr) => {
             if (err) {
                 console.error("Error executing Python script:", stderr);
-                console.log("Neha shah")
+              
                 reject(`Error executing Python script: ${stderr}`);
             } else {
                 try {
@@ -76,4 +76,6 @@ if (require.main === module) {
         .then(result => console.log("Final ASL Gloss Output:", result))
         .catch(err => console.error("Error:", err));
 }
+
+
 

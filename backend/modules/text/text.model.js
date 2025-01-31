@@ -19,7 +19,5 @@ const TextSchema = new mongoose.Schema({
 
 
 
-const TextModel = mongoose.model("User", TextSchema
-
-)
+const TextModel = mongoose.model("User", TextSchema)
 module.exports = TextModel;

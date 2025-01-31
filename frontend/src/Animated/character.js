@@ -1,136 +1,123 @@
-import React, {  useEffect, useRef, useContext } from 'react';
+import React, { useEffect, useRef, useContext } from 'react';
 import { useState } from 'react';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { AnimationMixer } from 'three';
-import { context } from '../ContextAPI/context'; // Ensure this is the correct context import
+import { context } from '../ContextAPI/context';
+
 
 const Character = () => {
   const mountRef = useRef(null);
-  const { activeWord } = useContext(context); // Use a single variable to track the active word
-const[newPath,setNewPath]=useState("");
-  useEffect(() => {
-    console.log("word",activeWord);
-    if (!activeWord) return; // Do nothing if no word is active
+  const { activeWord } = useContext(context);
+  const [newPath, setNewPath] = useState("");
 
-    // Map of words to model paths
+  useEffect(() => {
+    if (!activeWord) return;
+ 
+
     const modelPaths = {
       PLEASE: '/models/finalplease.glb',
       HELLO: '/models/finalhello.glb',
-    BYE: '/models/bye.glb',
-      // PLEASE: '/models/please.glb',
-      // HELLO: '/models/hello.glb',
-      STOP: '/models/stop.glb',
     };
 
-    // Get the model path for the active word
     const modelPath = modelPaths[activeWord.toUpperCase()];
     setNewPath(modelPath);
-    
-    console.log("model path",newPath)
+
+
     if (!modelPath) {
-   
       console.error(`No model found for word: ${activeWord}`);
       return;
     }
 
-    // Scene
+    // Scene Setup
     const scene = new THREE.Scene();
-    scene.background = null; // Set the background to transparent
+    scene.background = null;
+    scene.background = null;
 
-    // Camera
-    const camera = new THREE.PerspectiveCamera(
-      75,
-      window.innerWidth / window.innerHeight,
-      0.1,
-      1000
-    );
-    camera.position.set(0, 1.5, 4); // Adjust camera position for a good view
+    // Camera (Matching BlinkCharacter.js aspect ratio)
+    const camera = new THREE.PerspectiveCamera(75, 800 / 700, 0.2, 1000);
+    camera.position.set(0, 1.5, 4);
+
 
     // Renderer
+    
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setSize(2000, 700); // Fixed size for the canvas
+    renderer.setSize(800, 700); // Same as BlinkCharacter.js
     renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setClearColor(0x000000, 0); // Transparent background
     mountRef.current.appendChild(renderer.domElement);
 
+    
     // Lighting
     const light = new THREE.DirectionalLight(0xffffff, 1);
     light.position.set(2, 2, 2);
     scene.add(light);
 
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 2);
     scene.add(ambientLight);
 
-    // Resize Handler
-    const handleResize = () => {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-    };
-    window.addEventListener('resize', handleResize);
 
-    // Animation Mixer
     let mixer;
+    let clock = new THREE.Clock();
 
-    // Load the selected model
+    // Load Model
     const loader = new GLTFLoader();
     loader.load(
       modelPath,
       (gltf) => {
         const model = gltf.scene;
-        model.position.set(0, 0, 0); // Center the model
+        model.position.set(0, 0, 0);
+        model.scale.set(2, 2, 2);
+        model.position.set(0, 0, 0);
+        model.scale.set(2, 2, 2);
         scene.add(model);
 
-        // Setup animation if available
         if (gltf.animations && gltf.animations.length > 0) {
           mixer = new AnimationMixer(model);
-          gltf.animations.forEach((clip) => {
-            const action = mixer.clipAction(clip);
-            action.play();
-          });
+          const action = mixer.clipAction(gltf.animations[0]);
+          action.setLoop(THREE.LoopOnce); // Play only once
+          action.clampWhenFinished = true; // Stop at last frame
+          action.play();
+
+          const clock = new THREE.Clock();
+
+          // Play animation once
+          const animate = () => {
+            if (mixer) {
+              const delta = clock.getDelta();
+              mixer.update(delta);
+              if (action.isRunning()) {
+                requestAnimationFrame(animate);
+              }
+            }
+            renderer.render(scene, camera);
+          };
+          animate();
+        } else {
+          renderer.render(scene, camera);
         }
       },
       undefined,
-      (error) => {
-        console.error('Error loading model:', error);
-      }
+      (error) => console.error('Error loading model:', error)
     );
 
-    // Animation Clock
-    const clock = new THREE.Clock();
-
-    // Animation Loop
-    const animate = () => {
-      requestAnimationFrame(animate);
-
-      // Update animations
-      if (mixer) {
-        const delta = clock.getDelta();
-        mixer.update(delta);
-      }
-
-      renderer.render(scene, camera);
-    };
-    animate();
-
-    // Cleanup
     return () => {
+      if (mountRef.current) {
+        mountRef.current.removeChild(renderer.domElement);
+      }
       renderer.dispose();
-      mountRef.current.removeChild(renderer.domElement);
-      window.removeEventListener('resize', handleResize);
     };
-  }, [activeWord]); // Re-run effect when the active word changes
+  }, [activeWord]);
 
   return (
     <div
       ref={mountRef}
       style={{
         width: '800px',
-        height: '700px',
+        height: '1000px',
         display: 'flex',
         justifyContent: 'center',
-        alignItems: 'center', // Center the canvas in the viewport
+        alignItems: 'center',
+        alignItems: 'center',
       }}
     />
   );

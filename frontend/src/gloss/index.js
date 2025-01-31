@@ -1,176 +1,24 @@
-// import React, { useState, useEffect } from "react";
-// import axios from "axios";
-// import { ArrowRightIcon } from "@heroicons/react/24/solid";
-// import Character from '../Animated/character';
-// const WordToASLConverter = ({ selectedWord, setSelectedWord }) => {
-//   const [word, setWord] = useState(selectedWord || "");
-//   const [aslGloss, setAslGloss] = useState("");
-//   const [loading, setLoading] = useState(false);
-
-//   useEffect(() => {
-//     if (selectedWord) {
-//       setWord(selectedWord);
-//     }
-//   }, [selectedWord]);
-
-//   const handleConvert = async () => {
-//     if (!word.trim()) {
-//       setAslGloss("Please enter a word!");
-//       return;
-//     }
-
-//     console.log("Submitting text to backend:", word);
-//     setLoading(true);
-//     setAslGloss("");
-
-//     try {
-//       const token = "your-auth-token";
-//       const response = await axios.post(
-//         "http://localhost:9005/text/process-text",
-//         { text: word },
-//         {
-//           headers: {
-//             Authorization: `Bearer ${token}`,
-//           },
-//         }
-//       );
-//       setAslGloss(response.data.result[0].translation_text.split(": ").pop());
-//     } catch (error) {
-//       setAslGloss(error.response?.data?.message || "Error converting text.");
-//       console.error("Error response:", error.response?.data || error.message);
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   return (
-//     <div className="flex flex-col items-center justify-end mb-[6rem] w-full min-h-screen bg-purple-200">
-//        <Character/>
-//       <div className="flex space-x-4 items-center">
-//         <input
-//           type="text"
-//           value={word}
-//           onChange={(e) => {
-//             setWord(e.target.value);
-//             setSelectedWord("");
-//           }}
-//           placeholder="Enter text to generate sign language"
-//           className="border-solid text-center h-[4rem] w-[20rem] rounded-[0.4rem]"
-//         />
-//         <button
-//           onClick={handleConvert}
-//           className="bg-blue-500 text-white px-3 py-3 h-[2.5rem] rounded-[0.4rem] flex items-center hover:bg-blue-600"
-//           disabled={loading}
-//         >
-//           {loading ? "Converting..." : <ArrowRightIcon className="h-6 w-6" />}
-//         </button>
-//       </div>
-
-//       {aslGloss && (
-//         <div className="mt-6 text-lg font-semibold text-gray-700">{aslGloss}</div>
-//       )}
-//     </div>
-//   );
-// };
-
-// export default WordToASLConverter;
-
-
-
-// import React, { useState, useEffect } from "react";
-// import axios from "axios";
-// import { ArrowRightIcon } from "@heroicons/react/24/solid";
-
-// const WordToASLConverter = ({ selectedWord, setSelectedWord }) => {
-//   const [word, setWord] = useState(selectedWord || "");
-//   const [aslGloss, setAslGloss] = useState("");
-//   const [loading, setLoading] = useState(false);
-
-//   useEffect(() => {
-//     if (selectedWord) {
-//       setWord(selectedWord);
-//     }
-//   }, [selectedWord]);
-
-//   const handleConvert = async () => {
-//     if (!word.trim()) {
-//       setAslGloss("Please enter a word!");
-//       return;
-//     }
-
-//     console.log("Submitting text to backend:", word);
-//     setLoading(true);
-//     setAslGloss("");
-
-//     try {
-//       const token = "your-auth-token"; // Replace with your actual token
-//       const response = await axios.post(
-//         "http://localhost:9005/text/process-text",
-//         { text: word },
-//         {
-//           headers: {
-//             Authorization: `Bearer ${token}`,
-//           },
-//         }
-//       );
-//       setAslGloss(response.data.result[0].translation_text.split(": ").pop());
-//     } catch (error) {
-//       setAslGloss(error.response?.data?.message || "Error converting text.");
-//       console.error("Error response:", error.response?.data || error.message);
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   return (
-//     <div className="flex flex-col items-center justify-end mb-[6rem] w-full min-h-screen bg-purple-200">
-//       <div className="flex space-x-4 items-center">
-//         <input
-//           type="text"
-//           value={word}
-//           onChange={(e) => {
-//             setWord(e.target.value);
-//             setSelectedWord("");
-//           }}
-//           placeholder="Enter text to generate sign language"
-//           className="border-solid text-center h-[4rem] w-[20rem] rounded-[0.4rem]"
-//         />
-//         <button
-//           onClick={handleConvert}
-//           className="bg-blue-500 text-white px-3 py-3 h-[2.5rem] rounded-[0.4rem] flex items-center hover:bg-blue-600"
-//           disabled={loading}
-//         >
-//           {loading ? "Converting..." : <ArrowRightIcon className="h-6 w-6" />}
-//         </button>
-//       </div>
-
-//       {aslGloss && (
-//         <div className="mt-6 text-lg font-semibold text-gray-700">{aslGloss}</div>
-//       )}
-//     </div>
-//   );
-// };
-
-// export default WordToASLConverter;
-
-
-import React, { useState, useEffect, useRef,useContext } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import axios from "axios";
+import * as THREE from "three";
 import { ArrowRightIcon } from "@heroicons/react/24/solid";
 import { Canvas } from "@react-three/fiber";
 import { AnimationMixer } from "three";
 import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader";
 import { context } from "../ContextAPI/context";
-import Character from '../Animated/character';
+import Character from "../Animated/character";
+import BlinkCharacter from "../blink.js";
+
 const WordToASLConverter = ({ selectedWord, setSelectedWord }) => {
   const [word, setWord] = useState(selectedWord || "");
   const [aslGloss, setAslGloss] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showModal, setShowModal] = useState(false); 
   const modelRef = useRef(null);
   const mixer = useRef(null);
   const [animationUrl, setAnimationUrl] = useState("");
+  const { isPlease, setIsPlease, activeWord, setActiveWord } = useContext(context);
 
-  // Update word when selectedWord changes
   useEffect(() => {
     if (selectedWord) {
       setWord(selectedWord);
@@ -183,8 +31,9 @@ const WordToASLConverter = ({ selectedWord, setSelectedWord }) => {
     }
   }, [animationUrl]);
 
-  // Load FBX model using FBXLoader
   const loadFBXModel = (url) => {
+    if (!url) return;
+
     const loader = new FBXLoader();
     loader.load(url, (fbx) => {
       if (modelRef.current) {
@@ -194,25 +43,27 @@ const WordToASLConverter = ({ selectedWord, setSelectedWord }) => {
       modelRef.current = fbx;
       if (mixer.current) {
         mixer.current = new AnimationMixer(fbx);
-        const action = mixer.current.clipAction(fbx.animations[0]); // Play the first animation
+        const action = mixer.current.clipAction(fbx.animations[0]);
+        action.setLoop(THREE.LoopOnce);
+        action.clampWhenFinished = true;
         action.play();
       }
     });
   };
 
-  const{isPlease,setIsPlease,activeWord, setActiveWord}=useContext(context);
-  // Handle the ASL conversion
   const handleConvert = async () => {
     if (!word.trim()) {
-      setAslGloss("Please enter a word!");
+      setAslGloss("");
+      setShowModal(true);
       return;
     }
 
     setLoading(true);
     setAslGloss("");
+    setShowModal(false);
 
     try {
-      const token = "your-auth-token"; // Replace with actual token
+      const token = "your-auth-token";
       const response = await axios.post(
         "http://localhost:9005/text/process-text",
         { text: word },
@@ -225,57 +76,69 @@ const WordToASLConverter = ({ selectedWord, setSelectedWord }) => {
       const gloss = response.data.result[0].translation_text.split(": ").pop();
       setAslGloss(gloss);
 
-      // Map the gloss to an animation
       const animationFile = mapGlossToAnimation(gloss);
+      if (!animationFile) {
+        setShowModal(true); 
+      }
       setAnimationUrl(animationFile);
     } catch (error) {
-      setAslGloss(error.response?.data?.message || "Error converting text.");
+      setShowModal(true);
       console.error("Error response:", error.response?.data || error.message);
     } finally {
       setLoading(false);
     }
   };
 
-  // Map gloss to the corresponding animation file
   const mapGlossToAnimation = (gloss) => {
-    console.log("Received gloss:", gloss); // Debugging step
-  
-    // Normalize the gloss: Convert to lowercase and capitalize the first letter
     const normalizedGloss = gloss.toLowerCase().replace(/^\w/, (c) => c.toUpperCase());
-  
     const animationMap = {
-      "Hello": "../Animations/Hello.fbx",
-      "Please": '/models/please.glb',
-      // Add more mappings as needed
+      Hello: "/models/finalhello.glb",
+      Please: "/models/finalplease.glb",
     };
-  
+
     if (animationMap[normalizedGloss]) {
       setActiveWord(normalizedGloss);
-      // if(normalizedGloss==="Please"){
-      //   setIsPlease(true);
-
-      //   console.log("Please is true");
-      // }
-      // if(normalizedGloss==="Hello"){
-      //  setIsHello(true)
-      //  console.log("Hello is true");
-      // }
-      console.log(`Matched animation from gloss index,js: ${animationMap[normalizedGloss]}`);
-       // Log the mapped animation file
       return animationMap[normalizedGloss];
     } else {
-      console.log("No matching animation found for gloss:", gloss); // Debug if no match is found
-      return ""; // Return empty string if no mapping exists
+      return "";
     }
   };
-  
-  
 
   return (
-    <div className="flex flex-col items-center justify-end mb-[6rem] w-full min-h-screen bg-purple-200">
-     <Character/>
-     
-      <div className="flex space-x-4 items-center">
+    <div className="flex flex-col items-center justify-start w-full min-h-screen bg-purple-20">
+      {showModal && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+          <div className="bg-white p-8 rounded-lg shadow-lg">
+            <p className="text-xl font-medium mb-4">No Animation Found!</p>
+            <p className="text-gray-700">No matching animation available for this word.</p>
+            <button
+              className="bg-blue-600 text-white px-4 py-2 rounded-md mt-4"
+              onClick={() => setShowModal(false)}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
+      <div className="mt-6">
+        {!selectedWord ? (
+          <BlinkCharacter />
+        ) : (
+          <>
+            <Character />
+            <div style={{ width: "100%", height: "400px" }}>
+              <Canvas>
+                <ambientLight intensity={1} />
+                <spotLight position={[50, 50, 50]} />
+                {modelRef.current ? <primitive object={modelRef.current} /> : null}
+              </Canvas>
+            </div>
+          </>
+        )}
+      </div>
+
+      <div className="flex space-x-4 items-center mt-8">
         <input
           type="text"
           value={word}
@@ -295,21 +158,7 @@ const WordToASLConverter = ({ selectedWord, setSelectedWord }) => {
         </button>
       </div>
 
-      {aslGloss && (
-        <div className="mt-6 text-lg font-semibold text-gray-700">{aslGloss}</div>
-      )}
-
-      <div style={{ width: "100%", height: "400px" }}>
-      <Canvas>
-  <ambientLight intensity={0.5} />
-  <spotLight position={[10, 10, 10]} />
-  {modelRef.current ? (
-    <primitive object={modelRef.current} />
-  ) : (
-    ""
-  )}
-</Canvas>
-      </div>
+      {aslGloss && <div className="mt-6 text-lg font-semibold text-gray-700">{aslGloss}</div>}
     </div>
   );
 };
