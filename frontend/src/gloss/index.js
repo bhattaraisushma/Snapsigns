@@ -94,6 +94,7 @@ const WordToASLConverter = ({ selectedWord, setSelectedWord }) => {
     const animationMap = {
       Hello: "/models/finalhello.glb",
       Please: "/models/finalplease.glb",
+      Love:"/models/love.glb",
     };
 
     if (animationMap[normalizedGloss]) {

@@ -6,9 +6,9 @@ const BlinkCharacter = () => {
   const mountRef = useRef(null);
 
   useEffect(() => {
-    const modelPath = "/models/blink.glb"; // Ensure the correct model path
+    const modelPath = "/models/blink.glb"; 
 
-    // Scene setup
+   
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, 800 / 700, 0.2, 1000);
     camera.position.set(0, 1.5, 4);
@@ -21,7 +21,7 @@ const BlinkCharacter = () => {
       mountRef.current.appendChild(renderer.domElement);
     }
 
-    // Lighting
+
     const light = new THREE.DirectionalLight(0xffffff, 1);
     light.position.set(2, 2, 2);
     scene.add(light);
@@ -29,11 +29,10 @@ const BlinkCharacter = () => {
     const ambientLight = new THREE.AmbientLight(0xffffff, 2);
     scene.add(ambientLight);
 
-    // Animation variables
+
     let mixer;
     const clock = new THREE.Clock();
 
-    // Load 3D Model
     const loader = new GLTFLoader();
     loader.load(
       modelPath,
@@ -43,10 +42,10 @@ const BlinkCharacter = () => {
         model.scale.set(2.5, 2.5, 2.5);
         scene.add(model);
 
-        // If the model has animations, set up the mixer
+        
         if (gltf.animations.length > 0) {
           mixer = new THREE.AnimationMixer(model);
-          const action = mixer.clipAction(gltf.animations[0]); // Play the first animation
+          const action = mixer.clipAction(gltf.animations[0]); 
           action.setLoop(THREE.LoopRepeat);
           action.play();
         }
@@ -55,7 +54,7 @@ const BlinkCharacter = () => {
       (error) => console.error("Error loading model:", error)
     );
 
-    // Animation loop
+
     const animate = () => {
       requestAnimationFrame(animate);
 
@@ -68,7 +67,7 @@ const BlinkCharacter = () => {
     };
     animate();
 
-    // Cleanup on unmount
+
     return () => {
       if (mountRef.current) {
         mountRef.current.removeChild(renderer.domElement);
