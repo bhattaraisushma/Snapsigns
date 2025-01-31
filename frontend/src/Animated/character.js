@@ -15,9 +15,9 @@ const[newPath,setNewPath]=useState("");
 
     // Map of words to model paths
     const modelPaths = {
-      PLEASE: '/models/please1.glb',
-      hello: '/models/hello.glb',
-      bye: '/models/bye.glb',
+      PLEASE: '/models/please.glb',
+      HELLO:'/models/hello.glb',
+      LOVE: '/models/love.glb',
     };
 
     // Get the model path for the active word
