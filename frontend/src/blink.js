@@ -6,7 +6,7 @@ const BlinkCharacter = () => {
   const mountRef = useRef(null);
 
   useEffect(() => {
-    const modelPath = "/models/blink.glb";
+    const modelPath = "/models/blink1.glb"; // Use .glb instead of .bin
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, 800 / 700, 0.2, 1000);
@@ -16,7 +16,6 @@ const BlinkCharacter = () => {
     renderer.setSize(800, 700);
     renderer.setPixelRatio(window.devicePixelRatio);
 
-  
     if (mountRef.current) {
       mountRef.current.appendChild(renderer.domElement);
     }
@@ -39,7 +38,7 @@ const BlinkCharacter = () => {
         scene.add(model);
       },
       undefined,
-      (error) => console.error("Error loading Blink model:", error)
+      (error) => console.error("Error loading model:", error)
     );
 
     const animate = () => {
@@ -49,11 +48,10 @@ const BlinkCharacter = () => {
     animate();
 
     return () => {
-
       if (mountRef.current) {
         mountRef.current.removeChild(renderer.domElement);
       }
-      renderer.dispose(); 
+      renderer.dispose();
     };
   }, []);
 
