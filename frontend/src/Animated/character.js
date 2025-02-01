@@ -15,7 +15,7 @@ const Character = () => {
     if (!activeWord) return;
 
     const modelPaths = {
-      PLEASE: '/models/please1.glb',
+      PLEASE: '/models/please.glb',
       HELLO: '/models/hello.glb',
       LOVE: '/models/love.glb',
     };
