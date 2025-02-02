@@ -39,7 +39,7 @@ const BlinkCharacter = () => {
       (gltf) => {
         const model = gltf.scene;
         model.position.set(0, 0, 0);
-        model.scale.set(2.5, 2.5, 2.5);
+        model.scale.set(3, 3, 3);
         scene.add(model);
 
         
