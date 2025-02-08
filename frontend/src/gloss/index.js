@@ -128,7 +128,7 @@ const WordToASLConverter = ({ selectedWord, setSelectedWord }) => {
         ) : (
           <>
             <Character />
-            <div style={{ width: "50px", height: "50px" }}>
+            <div style={{ width: "1px", height: "1px" }}>
               <Canvas>
                 <ambientLight intensity={1} />
                 <spotLight position={[50, 50, 50]} />
