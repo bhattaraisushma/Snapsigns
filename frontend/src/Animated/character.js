@@ -194,8 +194,10 @@ const Character = () => {
       HELP: '/models/help.glb',
       NAME: '/models/name.glb',
       SORRY: '/models/sorry.glb',
-      STOP: '/models/stop.glb',
-      THANKYOU: '/models/thankyou.glb',
+      STOP: '/models/stop.glb'
+      GO: '/models/go.glb',
+      THANKYOU: '/models/thankyou.glb'
+
     };
 
     const modelPath = modelPaths[activeWord.toUpperCase()];
