@@ -395,6 +395,8 @@ import Character from "../Animated/character";
 import BlinkCharacter from "../blink.js";
 
 const WordToASLConverter = () => {
+
+const WordToASLConverter = () => {
   const [word, setWord] = useState("");
   const [aslGloss, setAslGloss] = useState("");
   const [loading, setLoading] = useState(false);
@@ -402,6 +404,13 @@ const WordToASLConverter = () => {
   const modelRef = useRef(null);
   const mixer = useRef(null);
   const [animationUrl, setAnimationUrl] = useState("");
+  const { isPlease, setIsPlease, activeWord, setActiveWord } = useContext(context);
+  const [word, setWord] = useState(activeWord || "");
+  useEffect(() => {
+    if (activeWord) {
+      setWord(activeWord);
+    }
+  }, [activeWord]);
   const { setActiveWord } = useContext(context);
 
   useEffect(() => {
@@ -445,6 +454,23 @@ modelRef.current?.clear();
     setShowModal(false);
   
     try {
+      const token = "your-auth-token";
+      const response = await axios.post(
+        "http://localhost:9005/text/process-text",
+        { text: word },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const gloss = response.data.result[0].translation_text.split(": ").pop();
+      setAslGloss(gloss);
+      console.log("gloss",gloss)
+      setActiveWord(gloss.toUpperCase());
+      console.log("Word",activeWord)
+
+      const animationFile = mapGlossToAnimation(gloss);
       const response = await axios.post("http://localhost:9005/text/process-text", { text: word });
       const gloss = response.data.result[0].translation_text.split(": ").pop().toUpperCase();
   
@@ -466,6 +492,29 @@ modelRef.current?.clear();
       setLoading(false);
     }
   };
+
+  const mapGlossToAnimation = (gloss) => {
+    const normalizedGloss = gloss.toLowerCase().replace(/^\w/, (c) => c.toUpperCase());
+    console.log("normalizedGloss",normalizedGloss)
+    const animationMap = {
+      PLEASE: "/models/finalplease.glb",
+      HELLO: "/models/hello.glb",
+      LOVE: "/models/love.glb",
+      HAPPY: "/models/happy.glb",
+      HELP: "/models/help.glb",
+      NAME: "/models/name.glb",
+      SORRY: "/models/sorry.glb",
+      STOP: "/models/stop.glb",
+      GO: "/models/go.glb",
+      THANKYOU: "/models/thankyou.glb",
+    };
+
+    if (animationMap[normalizedGloss]) {
+      setActiveWord(normalizedGloss);
+      return animationMap[normalizedGloss];
+    } else {
+      return "";
+    }
   
   const synonym_map = {
     hello: "HELLO_SIGN",
@@ -546,6 +595,20 @@ modelRef.current?.clear();
       )}
 
       <div className="mt-6">
+        {!activeWord ? (
+          <BlinkCharacter />
+        ) : (
+          <>
+            <Character />
+            <div style={{ width: "1px", height: "1px" }}>
+              <Canvas>
+                <ambientLight intensity={1} />
+                <spotLight position={[50, 50, 50]} />
+                {modelRef.current ? <primitive object={modelRef.current} /> : null}
+              </Canvas>
+            </div>
+          </>
+        )}
         {!word ? <BlinkCharacter /> : <Character />}
         <div style={{ width: "1px", height: "1px" }}>
           <Canvas>
@@ -558,6 +621,17 @@ modelRef.current?.clear();
 
       <div className="flex space-x-4 items-center mt-8">
         <input
+          type="text"
+          value={word}
+          onChange={(e) => {
+            setWord(e.target.value);
+           console.log("word",word) 
+           
+           
+          }}
+          placeholder="Enter text to generate sign language"
+          className="border-solid text-center h-[4rem] w-[20rem] rounded-[0.4rem]"
+        />
           type="text"
           value={word}
           onChange={(e) => setWord(e.target.value.trim().toLowerCase())}
@@ -578,5 +652,5 @@ modelRef.current?.clear();
     </div>
   );
 };
-
+};
 export default WordToASLConverter;

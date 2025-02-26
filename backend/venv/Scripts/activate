@@ -38,7 +38,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="C:\Users\Asus\Desktop\Backend for Snap\venv"
+VIRTUAL_ENV="D:\MINOR PROJECT\Snapsigns\Snapsigns\backend\venv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"

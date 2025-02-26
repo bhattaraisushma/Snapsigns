@@ -10,6 +10,7 @@ const Character = () => {
   const [newPath, setNewPath] = useState("");
 
   useEffect(() => {
+    console.log("activeWord", activeWord);
     if (!activeWord) return;
 
     const formattedWord = activeWord.replace("_SIGN", ""); 

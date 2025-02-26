@@ -14,10 +14,10 @@ const Homepage = () => {
 
       <div className='h-screen w-[50%]'>
     
-        <WordDisplay setSelectedWord={setSelectedWord} />
+        <WordDisplay  />
       </div>
     
-      <WordToASLConverter selectedWord={selectedWord} setSelectedWord={setSelectedWord} />
+      <WordToASLConverter />
     </div>
   );
 };
