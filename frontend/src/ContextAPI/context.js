@@ -7,6 +7,7 @@ export const ContextProvider = ({ children }) => {
   const [isPlease, setIsPlease] = useState(false);
   const [isHello, setIsHello] = useState(false);
   const [activeWord, setActiveWord] = useState(""); 
+  const[selectedWord, setSelectedWord] = useState("");
 
 
  

@@ -1,6 +1,8 @@
 import React from "react";
-
-function WordDisplay({ setSelectedWord }) {
+import { useContext } from "react";
+import { context } from "../ContextAPI/context";
+function WordDisplay() {
+  const {activeWord, setActiveWord} = useContext(context);
   const words = ["hello", "name", "sorry", "thank you", "happy", "help", "stop", "love", "please", "go","advance"];
 
   return (
@@ -11,7 +13,7 @@ function WordDisplay({ setSelectedWord }) {
           <li
             key={index}
             className="text-lg text-gray-800 p-2 border-b last:border-b-0 cursor-pointer hover:bg-purple-100"
-            onClick={() => setSelectedWord(word)}
+            onClick={() => setActiveWord(word)}
           >
             {word}
           </li>
