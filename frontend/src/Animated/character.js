@@ -1,51 +1,63 @@
-import React, { useEffect, useRef, useContext } from 'react';
-import { useState } from 'react';
-import * as THREE from 'three';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-import { AnimationMixer } from 'three';
-import { context } from '../ContextAPI/context'; 
+import React, { useEffect, useRef, useContext, useState } from "react";
+import * as THREE from "three";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import { AnimationMixer } from "three";
+import { context } from "../ContextAPI/context";
 
 const Character = () => {
   const mountRef = useRef(null);
-  const { activeWord } = useContext(context); 
+  const { activeWord } = useContext(context);
   const [newPath, setNewPath] = useState("");
-  
+
   useEffect(() => {
-    console.log("word", activeWord);
+    console.log("activeWord", activeWord);
     if (!activeWord) return;
 
+    const formattedWord = activeWord.replace("_SIGN", ""); 
+
+  
     const modelPaths = {
-      PLEASE: '/models/please.glb',
-      HELLO: '/models/hello.glb',
-      LOVE: '/models/love.glb',
+      PLEASE: "/models/finalplease.glb",
+      HELLO: "/models/hello.glb",
+      LOVE: "/models/love.glb",
+      HAPPY: "/models/happy.glb",
+      HELP: "/models/help.glb",
+      NAME: "/models/name.glb",
+      SORRY: "/models/sorry.glb",
+      STOP: "/models/stop.glb",
+      GO: "/models/go.glb",
+      THANKYOU: "/models/thankyou.glb",
     };
 
-    const modelPath = modelPaths[activeWord.toUpperCase()];
-    setNewPath(modelPath);
-    
-    console.log("model path", newPath)
+    const modelPath = modelPaths[formattedWord.toUpperCase()];
+
     if (!modelPath) {
       console.error(`No model found for word: ${activeWord}`);
       return;
     }
 
-    const scene = new THREE.Scene();
-    scene.background = null; 
+    setNewPath(modelPath);
 
-    const camera = new THREE.PerspectiveCamera(
-      75,
-      window.innerWidth / window.innerHeight,
-      0.1,
-      1000
-    );
-    camera.position.set(0, 1.5, 4); 
+ 
+    if (mountRef.current) {
+      while (mountRef.current.firstChild) {
+        mountRef.current.removeChild(mountRef.current.firstChild);
+      }
+    }
+
+
+    const scene = new THREE.Scene();
+    scene.background = null;
+
+    const camera = new THREE.PerspectiveCamera(75, 800 / 700, 0.1, 1000);
+    camera.position.set(0, 1.5, 4);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setSize(800, 700); 
+    renderer.setSize(800, 700);
     renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setClearColor(0x000000, 0); 
     mountRef.current.appendChild(renderer.domElement);
 
+    // Lights
     const light = new THREE.DirectionalLight(0xffffff, 1);
     light.position.set(2, 2, 2);
     scene.add(light);
@@ -53,25 +65,18 @@ const Character = () => {
     const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
     scene.add(ambientLight);
 
-    const handleResize = () => {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-    };
-    window.addEventListener('resize', handleResize);
-
     let mixer;
-
     const loader = new GLTFLoader();
+
     loader.load(
       modelPath,
       (gltf) => {
         const model = gltf.scene;
-        model.position.set(0, 2, 0 );
-        model.scale.set(2.5, 2.5, 2.5);  
+        model.position.set(0, 2, 0);
+        model.scale.set(2.5, 2.5, 2.5);
         scene.add(model);
 
-        if (gltf.animations && gltf.animations.length > 0) {
+        if (gltf.animations.length > 0) {
           mixer = new AnimationMixer(model);
           gltf.animations.forEach((clip) => {
             const action = mixer.clipAction(clip);
@@ -81,7 +86,7 @@ const Character = () => {
       },
       undefined,
       (error) => {
-        console.error('Error loading model:', error);
+        console.error("Error loading model:", error);
       }
     );
 
@@ -89,12 +94,7 @@ const Character = () => {
 
     const animate = () => {
       requestAnimationFrame(animate);
-
-      if (mixer) {
-        const delta = clock.getDelta();
-        mixer.update(delta);
-      }
-
+      if (mixer) mixer.update(clock.getDelta());
       renderer.render(scene, camera);
     };
     animate();
@@ -102,7 +102,6 @@ const Character = () => {
     return () => {
       renderer.dispose();
       mountRef.current.removeChild(renderer.domElement);
-      window.removeEventListener('resize', handleResize);
     };
   }, [activeWord]);
 
@@ -110,11 +109,11 @@ const Character = () => {
     <div
       ref={mountRef}
       style={{
-        width: '800px',
-        height: '700px',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center', 
+        width: "800px",
+        height: "700px",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
       }}
     />
   );

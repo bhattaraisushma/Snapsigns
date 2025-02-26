@@ -89,21 +89,81 @@ const WordToASLConverter = ({ selectedWord, setSelectedWord }) => {
     }
   };
 
+  const synonym_map = {
+    "hello": "HELLO_SIGN",
+    "hi": "HELLO_SIGN",
+    "hey": "HELLO_SIGN",
+    "greetings": "HELLO_SIGN",
+    
+    "name": "NAME_SIGN",
+    "identity": "NAME_SIGN",
+    
+    "sorry": "APOLOGY_SIGN",
+    "apologize": "APOLOGY_SIGN",
+    "regret": "APOLOGY_SIGN",
+    
+    "thank you": "THANK_YOU_SIGN",
+    "thanks": "THANK_YOU_SIGN",
+    "appreciate": "THANK_YOU_SIGN",
+    "grateful": "THANK_YOU_SIGN",
+    
+    "happy": "HAPPY_SIGN",
+    "joyful": "HAPPY_SIGN",
+    "glad": "HAPPY_SIGN",
+    "pleased": "HAPPY_SIGN",
+    
+    "help": "HELP_SIGN",
+    "assist": "HELP_SIGN",
+    "support": "HELP_SIGN",
+    "aid": "HELP_SIGN",
+    
+    "stop": "STOP_SIGN",
+    "halt": "STOP_SIGN",
+    "cease": "STOP_SIGN",
+    "pause": "STOP_SIGN",
+    
+    "love": "LOVE_SIGN",
+    "affection": "LOVE_SIGN",
+    "care": "LOVE_SIGN",
+    "adore": "LOVE_SIGN",
+    
+    "please": "PLEASE_SIGN",
+    "kindly": "PLEASE_SIGN",
+    "request": "PLEASE_SIGN",
+    
+    "go": "GO_SIGN",
+    "move": "GO_SIGN",
+    "proceed": "GO_SIGN",
+    "advance": "GO_SIGN"
+  };
+  
+  const animationMap = {
+    HELLO_SIGN: "/models/hello.glb",
+    PLEASE_SIGN: "/models/please.glb",
+    LOVE_SIGN: "/models/love.glb",
+    HAPPY_SIGN: "/models/happy.glb",
+    HELP_SIGN: "/models/help.glb",
+    NAME_SIGN: "/models/name.glb",
+    APOLOGY_SIGN: "/models/sorry.glb",
+    STOP_SIGN: "/models/stop.glb",
+    GO_SIGN: "/models/go.glb",
+    THANK_YOU_SIGN: "/models/thankyou.glb"
+  };
+  
   const mapGlossToAnimation = (gloss) => {
-    const normalizedGloss = gloss.toLowerCase().replace(/^\w/, (c) => c.toUpperCase());
-    const animationMap = {
-      Hello: "/models/finalhello.glb",
-      Please: "/models/finalplease.glb",
-      Love:"/models/love.glb",
-    };
+    const normalizedGloss = gloss.toLowerCase().trim();
+    
 
-    if (animationMap[normalizedGloss]) {
-      setActiveWord(normalizedGloss);
-      return animationMap[normalizedGloss];
+    const signCategory = synonym_map[normalizedGloss] || null;
+  
+    if (signCategory && animationMap[signCategory]) {
+      setActiveWord(signCategory);
+      return animationMap[signCategory];
     } else {
       return "";
     }
   };
+  
 
   return (
     <div className="flex flex-col items-center justify-start w-full min-h-screen bg-purple-20">
@@ -128,7 +188,7 @@ const WordToASLConverter = ({ selectedWord, setSelectedWord }) => {
         ) : (
           <>
             <Character />
-            <div style={{ width: "50px", height: "50px" }}>
+            <div style={{ width: "1px", height: "1px" }}>
               <Canvas>
                 <ambientLight intensity={1} />
                 <spotLight position={[50, 50, 50]} />
@@ -140,16 +200,27 @@ const WordToASLConverter = ({ selectedWord, setSelectedWord }) => {
       </div>
 
       <div className="flex space-x-4 items-center mt-8">
+   
         <input
-          type="text"
-          value={word}
-          onChange={(e) => {
-            setWord(e.target.value);
-            setSelectedWord("");
-          }}
-          placeholder="Enter text to generate sign language"
-          className="border-solid text-center h-[4rem] w-[20rem] rounded-[0.4rem]"
-        />
+  type="text"
+  value={word}
+  onChange={(e) => {
+    const newWord = e.target.value;
+    console.log("newWord", newWord);
+    setWord(newWord);
+    setSelectedWord(newWord); 
+
+    const gloss = synonym_map[newWord.toLowerCase().trim()];
+    console.log("gloss", gloss);
+    if (gloss) {
+      setAnimationUrl(animationMap[gloss] || "");
+      console.log("animationMap[gloss]", animationMap[gloss]);
+    }
+  }}
+  placeholder="Enter text to generate sign language"
+  className="border-solid text-center h-[4rem] w-[20rem] rounded-[0.4rem]"
+/>
+
         <button
           onClick={handleConvert}
           className="bg-blue-500 text-white px-3 py-3 h-[2.5rem] rounded-[0.4rem] flex items-center hover:bg-blue-600"

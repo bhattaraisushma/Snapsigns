@@ -1,9 +1,7 @@
-// list/index.js
-
 import React from "react";
 
 function WordDisplay({ setSelectedWord }) {
-  const words = ["hello", "name", "sorry", "thank you", "happy", "help", "stop", "love", "please", "go"];
+  const words = ["hello", "name", "sorry", "thank you", "happy", "help", "stop", "love", "please", "go","advance"];
 
   return (
     <div className="flex flex-col items-center justify-center bg-white h-full">
