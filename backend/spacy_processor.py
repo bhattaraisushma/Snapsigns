@@ -12,12 +12,21 @@ temporal_words = {"before", "after", "since", "until", "while", "now", "tomorrow
 for word in temporal_words:
     nlp.vocab[word].is_stop = False
 
-IMPORTANT_WORDS = {"i", "we", "me", "you", "he", "she", "it", "they", "them", 
+IMPORTANT_WORDS = {"i", "we", "me", "he", "she", "it", "they", "them", 
                    "us", "why", "what", "how", "who", "where", "when", "which"}
 VERB_EXCEPTIONS = {"singing": "sing"}
 SPECIAL_GLOSSES = {"go": "GO", "name": "NAME","thank you": "THANK YOU"}
 
 PREPOSITIONS_AUX_VERBS = {"at", "on", "in", "to", "are", "am", "will", "is"}
+
+def process_text(input_text: str) -> dict:
+   
+    for phrase, gloss in SPECIAL_GLOSSES.items():
+        if phrase in input_text.lower():
+            input_text = input_text.lower().replace(phrase, gloss)
+
+    doc = nlp(input_text)
+
 
 def sort_temporal_tokens(tokens):
     

@@ -13,22 +13,23 @@ const Character = () => {
     console.log("activeWord", activeWord);
     if (!activeWord) return;
 
-    const formattedWord = activeWord.replace("_SIGN", ""); 
+    
+    const formattedWord = activeWord.replace("_SIGN", "").replace("_", " ");
 
-  
     const modelPaths = {
-      PLEASE: "/models/finalplease.glb",
-      HELLO: "/models/hello.glb",
-      LOVE: "/models/love.glb",
-      HAPPY: "/models/happy.glb",
-      HELP: "/models/help.glb",
-      NAME: "/models/name.glb",
-      SORRY: "/models/sorry.glb",
-      STOP: "/models/stop.glb",
-      GO: "/models/go.glb",
-      THANKYOU: "/models/thankyou.glb",
+      PLEASEE: "/models/finalplease.glb",
+      GREET: "/models/hello.glb",
+      LOVEE: "/models/love2.glb",
+      HAPPYY: "/models/happy.glb",
+      HELPP: "/models/help.glb",
+      NAM: "/models/name2.glb",
+      APOLOGY: "/models/sorry.glb", 
+      STOPP: "/models/stop.glb",
+      GOO: "/models/go.glb",
+      "THANKING YOU": "/models/thankyou2.glb",
     };
 
+    
     const modelPath = modelPaths[formattedWord.toUpperCase()];
 
     if (!modelPath) {
@@ -38,26 +39,23 @@ const Character = () => {
 
     setNewPath(modelPath);
 
- 
     if (mountRef.current) {
       while (mountRef.current.firstChild) {
         mountRef.current.removeChild(mountRef.current.firstChild);
       }
     }
 
-
     const scene = new THREE.Scene();
     scene.background = null;
 
     const camera = new THREE.PerspectiveCamera(75, 800 / 700, 0.1, 1000);
-    camera.position.set(0, 1.5, 4);
+    camera.position.set(0, 0.8, 4);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(800, 700);
     renderer.setPixelRatio(window.devicePixelRatio);
     mountRef.current.appendChild(renderer.domElement);
 
-    // Lights
     const light = new THREE.DirectionalLight(0xffffff, 1);
     light.position.set(2, 2, 2);
     scene.add(light);
@@ -72,16 +70,33 @@ const Character = () => {
       modelPath,
       (gltf) => {
         const model = gltf.scene;
-        model.position.set(0, 2, 0);
-        model.scale.set(2.5, 2.5, 2.5);
+
+
+        const box = new THREE.Box3().setFromObject(model);
+        const center = box.getCenter(new THREE.Vector3());
+        model.position.sub(center);
+
+        const size = new THREE.Vector3();
+        box.getSize(size);
+        const desiredHeight = 2.5;
+        const scaleFactor = (desiredHeight / size.y) * 1.6; 
+        model.scale.set(scaleFactor, scaleFactor, scaleFactor);
+
+
+        model.position.y -= 0.05; 
+
         scene.add(model);
 
+      
         if (gltf.animations.length > 0) {
           mixer = new AnimationMixer(model);
           gltf.animations.forEach((clip) => {
             const action = mixer.clipAction(clip);
+            action.clampWhenFinished = true;
             action.play();
           });
+        } else {
+          console.warn("No animations found in model:", modelPath);
         }
       },
       undefined,
@@ -120,5 +135,3 @@ const Character = () => {
 };
 
 export default Character;
-
-
