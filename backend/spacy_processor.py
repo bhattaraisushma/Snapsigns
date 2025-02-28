@@ -15,7 +15,7 @@ for word in temporal_words:
 IMPORTANT_WORDS = {"i", "we", "me", "you", "he", "she", "it", "they", "them", 
                    "us", "why", "what", "how", "who", "where", "when", "which"}
 VERB_EXCEPTIONS = {"singing": "sing"}
-SPECIAL_GLOSSES = {"go": "GO", "name": "NAME"}
+SPECIAL_GLOSSES = {"go": "GO", "name": "NAME","thank you": "THANK YOU"}
 
 PREPOSITIONS_AUX_VERBS = {"at", "on", "in", "to", "are", "am", "will", "is"}
 
@@ -38,6 +38,10 @@ def process_text(input_text: str) -> dict:
 
     for token in doc:
         token_text = token.text.lower()
+        if token_text in SPECIAL_GLOSSES:
+            temporal_tokens.append(SPECIAL_GLOSSES[token_text])
+            continue
+
 
      
         if token_text in temporal_words:
