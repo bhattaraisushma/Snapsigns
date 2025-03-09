@@ -13,7 +13,7 @@ import { ArrowUturnLeftIcon } from "@heroicons/react/24/solid";
 const WordToASLConverter = () => {
   const [aslGloss, setAslGloss] = useState("");
   const [loading, setLoading] = useState(false);
-  const [showModal, setShowModal] = useState(false); 
+  const [showModal, setShowModal] = useState(false);
   const modelRef = useRef(null);
   const mixer = useRef(null);
   const [animationUrl, setAnimationUrl] = useState("");
@@ -22,11 +22,11 @@ const WordToASLConverter = () => {
   const [inputVisible, setInputVisible] = useState(true);
   const [hideArrow, setHideArrow] = useState(false);
   useEffect(() => {
-    if (activeWord || word === "") { 
+    if (activeWord || word === "") {
       setWord(activeWord);
     }
   }, [activeWord, word]);
-  
+
 
   useEffect(() => {
     if (animationUrl) {
@@ -51,7 +51,7 @@ const WordToASLConverter = () => {
     appreciate: "THANKING_YOU_SIGN",
     grateful: "THANKING_YOU_SIGN",
     "thank you": "THANKING_YOU_SIGN",
-   
+
 
     happy: "HAPPYY_SIGN",
     joyful: "HAPPYY_SIGN",
@@ -98,7 +98,7 @@ const WordToASLConverter = () => {
 
   const loadFBXModel = (url) => {
     if (!url) return;
-  
+
     const loader = new FBXLoader();
     loader.load(
       url,
@@ -106,7 +106,7 @@ const WordToASLConverter = () => {
         if (modelRef.current) {
           modelRef.current.clear();
         }
-  
+
         modelRef.current = fbx;
         if (mixer.current) {
           mixer.current = new AnimationMixer(fbx);
@@ -116,13 +116,13 @@ const WordToASLConverter = () => {
           action.play();
         }
       },
-      undefined, 
+      undefined,
       (error) => {
         console.error("Error loading model:", error);
       }
     );
   };
-  
+
 
 
   const handleConvert = async () => {
@@ -131,12 +131,12 @@ const WordToASLConverter = () => {
       setShowModal(true);
       return;
     }
-  
+
     setLoading(true);
     setAslGloss("");
     setShowModal(false);
-    setInputVisible(false); // Hide input box after clicking the button
-  
+    setInputVisible(false);
+
     try {
       const token = "your-auth-token";
       const response = await axios.post(
@@ -148,14 +148,14 @@ const WordToASLConverter = () => {
           },
         }
       );
-  
+
       const gloss = response.data.result[0].translation_text.split(": ").pop();
       console.log("Received Gloss:", gloss);
-  
+
       setAslGloss(gloss);
       const animationFile = mapGlossToAnimation(gloss);
       console.log("Selected Animation File:", animationFile);
-  
+
       if (!animationFile) {
         setShowModal(true);
       }
@@ -170,29 +170,29 @@ const WordToASLConverter = () => {
 
   const mapGlossToAnimation = (gloss) => {
     const normalizedGloss = gloss.toLowerCase().replace(/^\w/, (c) => c.toUpperCase());
-    console.log("Normalized Gloss:", normalizedGloss); 
-    
-    const animationKey = synonym_map[normalizedGloss.toLowerCase()] 
+    console.log("Normalized Gloss:", normalizedGloss);
+
+    const animationKey = synonym_map[normalizedGloss.toLowerCase()]
     console.log("Animation Key:", animationKey);
-    
+
     const animationFile = animationMap[animationKey];
-    console.log("Animation File:", animationFile); 
-    
+    console.log("Animation File:", animationFile);
+
     if (animationFile) {
       setActiveWord(animationKey);
       console.log("Animation key:", activeWord);
-     return animationFile;
+      return animationFile;
     } else {
-      console.log("No model found for word:", normalizedGloss); 
+      console.log("No model found for word:", normalizedGloss);
       return "";
     }
   };
-  
+
 
   return (
     <div className="flex flex-col items-center justify-start w-full min-h-screen bg-purple-20 relative">
-      
-      {/* Refresh Arrow Button */}
+
+
       <button
         onClick={() => window.location.reload()}
         className="absolute top-4 left-4 bg-gray-800 text-white p-2 rounded-full hover:bg-gray-700 transition-all"
@@ -200,7 +200,6 @@ const WordToASLConverter = () => {
         <ArrowUturnLeftIcon className="h-6 w-6" />
       </button>
 
-      {/* Existing Code */}
       {showModal && (
         <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
           <div className="bg-white p-8 rounded-lg shadow-lg">
@@ -244,18 +243,22 @@ const WordToASLConverter = () => {
           />
         )}
 
-        <button
-          onClick={() => {
-            handleConvert();
-            setHideArrow(true);
-          }}
-          className={`bg-blue-500 text-white px-3 py-3 h-[2.5rem] rounded-[0.4rem] flex items-center justify-center hover:bg-blue-600 transition-all ${
-            hideArrow ? "px-0" : ""
-          }`}
-          disabled={loading}
-        >
-          {loading ? "Converting..." : !hideArrow && <ArrowRightIcon className="h-6 w-6" />}
-        </button>
+
+        {!hideArrow && (
+          <button
+            onClick={() => {
+              setLoading(true);
+              handleConvert().finally(() => {
+                setHideArrow(true);
+              });
+            }}
+            className="bg-blue-500 text-white px-3 py-3 h-[2.5rem] rounded-[0.4rem] flex items-center justify-center hover:bg-blue-600 transition-all"
+            disabled={loading}
+          >
+            {loading ? "Converting..." : <ArrowRightIcon className="h-6 w-6" />}
+          </button>
+        )}
+
       </div>
 
       {aslGloss && <div className="mt-0 text-lg font-semibold text-gray-700">{aslGloss}</div>}
@@ -269,5 +272,5 @@ export default WordToASLConverter;
 
 
 
-  
+
 
