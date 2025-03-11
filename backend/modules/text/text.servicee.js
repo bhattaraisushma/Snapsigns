@@ -7,6 +7,7 @@ const HF_API_KEY = process.env.HF_API_KEY;
 
 
 const processText = (inputText) => {
+    
     return new Promise((resolve, reject) => {
         exec(`python spacy_processor.py "${inputText}"`, (err, stdout, stderr) => {
             if (err) {
