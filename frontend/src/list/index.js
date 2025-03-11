@@ -6,7 +6,7 @@ const synonym_map = {
   name: ["identity"],
   sorry: ["apologize", "regret"],
   "thank you": ["thanks", "appreciate", "grateful"],
-  happy: ["joyful", "glad", "pleased"],
+  happy: ["joyful", "glad", "merry"],
   help: ["assist", "support", "aid"],
   stop: ["halt", "cease", "pause"],
   love: ["affection", "care", "adore"],

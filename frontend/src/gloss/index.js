@@ -38,7 +38,7 @@ const WordToASLConverter = () => {
     hello: "GREET_SIGN",
     hi: "GREET_SIGN",
     hey: "GREET_SIGN",
-    greeting: "GREET_SIGN",
+    greet:"GREET_SIGN",
 
     name: "NAM_SIGN",
     identity: "NAM_SIGN",
@@ -56,7 +56,7 @@ const WordToASLConverter = () => {
     happy: "HAPPYY_SIGN",
     joyful: "HAPPYY_SIGN",
     glad: "HAPPYY_SIGN",
-    pleased: "HAPPYY_SIGN",
+    merry: "HAPPYY_SIGN",
 
     help: "HELPP_SIGN",
     assist: "HELPP_SIGN",
