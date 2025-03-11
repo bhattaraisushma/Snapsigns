@@ -6,26 +6,26 @@ const HF_API_URL = "https://api-inference.huggingface.co/models/elpeeee/results"
 const HF_API_KEY = process.env.HF_API_KEY; 
 
 
-const processText = (inputText) => {
+// const processText = (inputText) => {
     
-    return new Promise((resolve, reject) => {
-        exec(`python spacy_processor.py "${inputText}"`, (err, stdout, stderr) => {
-            if (err) {
-                console.error("Error executing Python script:", stderr);
-                reject(`Error executing Python script: ${stderr}`);
-            } else {
-                try {
-                    console.log("Python Script Output:", stdout);
-                    const result = JSON.parse(stdout);
-                    resolve(result.asl_gloss);
-                } catch (e) {
-                    console.error("Error parsing Python script output:", e.message);
-                    reject("Error parsing Python script output: " + e.message);
-                }
-            }
-        });
-    });
-};
+//     return new Promise((resolve, reject) => {
+//         exec(`python spacy_processor.py "${inputText}"`, (err, stdout, stderr) => {
+//             if (err) {
+//                 console.error("Error executing Python script:", stderr);
+//                 reject(`Error executing Python script: ${stderr}`);
+//             } else {
+//                 try {
+//                     console.log("Python Script Output:", stdout);
+//                     const result = JSON.parse(stdout);
+//                     resolve(result.asl_gloss);
+//                 } catch (e) {
+//                     console.error("Error parsing Python script output:", e.message);
+//                     reject("Error parsing Python script output: " + e.message);
+//                 }
+//             }
+//         });
+//     });
+// };
 
 
 async function fetchWithRetry(url, body, options, retries = 3) {
@@ -71,7 +71,7 @@ exports.processTextForASLGloss = async (inputText) => {
        
         const result = await fetchWithRetry(
             HF_API_URL,
-            { inputs: processedText }, 
+            { inputs: inputText },  // Sending the input text to the Hugging Face model
             { headers: { Authorization: `Bearer ${HF_API_KEY}` } }
         );
 
