@@ -5,7 +5,6 @@ require('dotenv').config();
 const HF_API_URL = "https://api-inference.huggingface.co/models/elpeeee/results";
 const HF_API_KEY = process.env.HF_API_KEY; 
 
-
 async function fetchWithRetry(url, body, options, retries = 3) {
     try {
         console.log("Sending request to Hugging Face:", body);
@@ -43,13 +42,12 @@ async function fetchWithRetry(url, body, options, retries = 3) {
 exports.processTextForASLGloss = async (inputText) => {
     try {
      
-        const processedText = await processText(inputText);
-        console.log("Processed Text for ASL Gloss:", processedText);
+       
 
        
         const result = await fetchWithRetry(
             HF_API_URL,
-            { inputs: processedText }, 
+            { inputs: inputText },  
             { headers: { Authorization: `Bearer ${HF_API_KEY}` } }
         );
 
